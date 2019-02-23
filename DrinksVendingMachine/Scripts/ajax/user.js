@@ -1,0 +1,5 @@
+﻿function UserManager(token) {
+    
+
+
+}

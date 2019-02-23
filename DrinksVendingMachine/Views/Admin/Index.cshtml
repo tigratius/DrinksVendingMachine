@@ -1,0 +1,124 @@
+﻿
+@model DrinksVendingMachine.Models.ModelView
+
+@{
+    ViewBag.Title = "Панель администратора";
+}
+
+<script type="text/javascript" src="~/Scripts/ajax/admin.js"></script>
+
+<h1>Настройки автомата</h1>
+
+<h2>Монеты</h2>
+
+<table>
+    <thead>
+        <tr>
+            <td>
+                <p>Номинал</p>
+            </td>
+            <td>
+                <p>Количество</p>
+            </td>
+            <td>
+                <p>Блокировка</p>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Coins)
+        {
+            <tr>
+                <td>
+                    <p>
+                        @((int)item.Value)
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        <input id="@item.Id" type="number" value="@item.Count" onchange="adminManager.changeCoinCount('@item.Id')" />
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        <input id="bl_@item.Id" type="checkbox" checked="@item.IsBlocking" onchange="adminManager.changeBlocking('@item.Id')" />
+                    </p>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Напитки</h2>
+
+<form>
+    <div>
+        <input type="file" id="uploadImageFile" accept="image/*" style="display: inline-block"/>
+        <input type="text" id="name" placeholder="Название напитка">
+        <input id="cost" type="number" placeholder="Цена">
+        <input type="number" id="count" placeholder="Количество">
+        <input type="button" class="add-row" value="Добавить" onclick="adminManager.addDrink()">
+    </div>
+</form>
+
+<br />
+
+<table id="drink-table">
+    <thead>
+        <tr>
+            <td>
+                <p>Картинка</p>
+            </td>
+            <td>
+                <p>Название</p>
+            </td>
+            <td>
+                <p>Стоимость</p>
+            </td>
+            <td>
+                <p>Количество</p>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Drinks)
+        {
+            <tr id="row_@item.Id">
+                <td>
+                    <p>
+                        <img id="img_@item.Id" src="/Content/Images/@item.Image" style="width: 80px; height: 100px; top: 15px; position: relative" onclick="imageClick('@item.Id')" />
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        <input id="dn_@item.Id" type="text" value="@item.Name" onchange="adminManager.changeDrinkName('@item.Id')" />
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        <input id="dcst_@item.Id" type="number" value="@item.CostPrice" onchange="adminManager.changeDrinkCost('@item.Id')" />
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        <input id="dcnt_@item.Id" type="number" value="@item.Count" onchange="adminManager.changeDrinkCount('@item.Id')" />
+                    </p>
+                </td>
+                <td>
+                    <p>
+                        <input type="button" value="Удалить" onclick="adminManager.removeDrink('@item.Id')" />
+                    </p>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <input type="hidden" id="hiddenImg" /><br />
+    <input type="file" name="upload" id="uploadFile" style="display: none;" accept="image/*" onchange="adminManager.changeImage()" /><br />
+</div>
+
+<script type="text/javascript">
+    var adminManager = new AdminManager('@Model.Token');
+</script>
