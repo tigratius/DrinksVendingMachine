@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 
-namespace DrinksVendingMachine.Classes
+namespace DrinksVendingMachine.Models.DB
 {
     public abstract class Repository<T>
     {

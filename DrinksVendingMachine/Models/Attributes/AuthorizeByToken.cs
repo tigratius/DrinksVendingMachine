@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace DrinksVendingMachine.Classes
+namespace DrinksVendingMachine.Models.Attributes
 {
     public class AuthorizeByToken : AuthorizeAttribute
     {
-        private const string paramTokenName = "token";
+        private const string ParamTokenName = "token";
 
         public override void OnAuthorization(AuthorizationContext actionContext)
         {
 
-            if (Authorize(actionContext))
+            if (Authorize())
             {
                 return;
             }
@@ -25,13 +23,13 @@ namespace DrinksVendingMachine.Classes
             base.HandleUnauthorizedRequest(actionContext);
         }
 
-        private bool Authorize(AuthorizationContext actionContext)
+        private bool Authorize()
         {
             try
             {
                 var context = new HttpContextWrapper(HttpContext.Current);
                 HttpRequestBase request = context.Request;
-                string token = request.Params[paramTokenName];
+                string token = request.Params[ParamTokenName];
 
                 return ValidatingTokens.IsTokenValid(token); 
             }

@@ -1,11 +1,11 @@
 ﻿
-@model DrinksVendingMachine.Models.ModelView
+@model DrinksVendingMachine.Models.Classes.ModelView
 
 @{
     ViewBag.Title = "Панель администратора";
 }
 
-<script type="text/javascript" src="~/Scripts/ajax/admin.js"></script>
+<script type="text/javascript" src="~/Scripts/js/admin.js"></script>
 
 <h1>Настройки автомата</h1>
 
@@ -51,7 +51,18 @@
 
 <h2>Напитки</h2>
 
-<form>
+
+@using (Html.BeginForm("Import", "Admin", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    <p>Импорт напитков</p>
+    <div class="form-group">
+        <input type="file" id="importDataFile" name="upload" style="display: inline-block"/>
+        <input type="submit" value="Импортировать" @*class="btn btn-default"*@ />
+    </div>
+}
+
+<div>
+    <p>Добавление нового напитка </p>
     <div>
         <input type="file" id="uploadImageFile" accept="image/*" style="display: inline-block"/>
         <input type="text" id="name" placeholder="Название напитка">
@@ -59,7 +70,7 @@
         <input type="number" id="count" placeholder="Количество">
         <input type="button" class="add-row" value="Добавить" onclick="adminManager.addDrink()">
     </div>
-</form>
+</div>
 
 <br />
 
@@ -67,7 +78,7 @@
     <thead>
         <tr>
             <td>
-                <p>Картинка</p>
+                <p></p>
             </td>
             <td>
                 <p>Название</p>
@@ -86,7 +97,7 @@
             <tr id="row_@item.Id">
                 <td>
                     <p>
-                        <img id="img_@item.Id" src="/Content/Images/@item.Image" style="width: 80px; height: 100px; top: 15px; position: relative" onclick="imageClick('@item.Id')" />
+                        <img id="img_@item.Id" src="/Content/Images/@item.Image" class="img img-hover" onclick="imageClick('@item.Id')" />
                     </p>
                 </td>
                 <td>

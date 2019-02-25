@@ -18,13 +18,7 @@ function AdminManager(token) {
                         $(`#img_${response.id}`).attr("src", `/Content/Images/${response.filename}`);
                     }
                 },
-                error: function (xhr, status, error) {
-                    console.log("AJAX request error!");
-                    console.log("  xhr:");
-                    console.log(xhr);
-                    console.log("  status=" + status);
-                    console.log("  error=" + error);
-                }
+                error: processErrorStd
             });
         });
     };
@@ -46,13 +40,7 @@ function AdminManager(token) {
                     success: function (response) {
                         if (callback) callback(response);
                     },
-                    error: function (xhr, status, error) {
-                        console.log("AJAX request error!");
-                        console.log("  xhr:");
-                        console.log(xhr);
-                        console.log("  status=" + status);
-                        console.log("  error=" + error);
-                    }
+                    error: processErrorStd
                 });
             } else {
                 alert("Браузер не поддерживает загрузку файлов HTML5!");
@@ -68,6 +56,11 @@ function AdminManager(token) {
             var cost = $("#cost").val();
             var count = $("#count").val();
 
+            if (cost <= 0 || count < 0 || count === "") {
+                alert("Ошибка! Проверьте данные.");
+                return;
+            }
+
             var data = { name: name, cost: cost, count: count, img: response.filename };
             $.ajax({
                 type: "POST",
@@ -76,21 +69,15 @@ function AdminManager(token) {
                 success: function (response) {
                     if (response != null) {
                         var markup =
-                            `<tr id='row_${response.id}'><td><p><img id='img_${response.id}' src='/Content/Images/${response.img}' style='width: 80px; height: 100px; top: 15px; position: relative' onclick='imageClick('${response.id}')' />
-                            </p></td><td><p><input id='dn_${response.id}' type='text' value='${response.name}' onchange='changeDrinkName('${response.id}')' />
-                            </p></td><td><p><input id='dcst_${response.id}' value='${response.cost}' onchange='changeDrinkCost('${response.id}')' />
-                            </p></td><td><p><input id='dcnt_${response.id}' type='number' value='${response.count}' onchange='changeDrinkCount('${response.id}')' />
-                            </p></td><td><p><input type='button' value='Удалить' onclick='removeDrink('${response.id}')' /></p></td>`;
+                            `<tr id='row_${response.id}'><td><p><img id='img_${response.id}' src='/Content/Images/${response.img}' style='width: 80px; height: 100px; top: 15px; position: relative' onclick="imageClick('${response.id}')" />
+                            </p></td><td><p><input id='dn_${response.id}' type='text' value='${response.name}' onchange="adminManager.changeDrinkName('${response.id}')" />
+                            </p></td><td><p><input id='dcst_${response.id}' value='${response.cost}' onchange="adminManager.changeDrinkCost('${response.id}')" />
+                            </p></td><td><p><input id='dcnt_${response.id}' type='number' value='${response.count}' onchange="adminManager.changeDrinkCount('${response.id}')" />
+                            </p></td><td><p><input type='button' value='Удалить' onclick="adminManager.removeDrink('${response.id}')" /></p></td>`;
                         $("#drink-table tbody").append(markup);
                     }
                 },
-                error: function (xhr, status, error) {
-                    console.log("AJAX request error!");
-                    console.log("  xhr:");
-                    console.log(xhr);
-                    console.log("  status=" + status);
-                    console.log("  error=" + error);
-                }
+                error: processErrorStd
             });
         });
     };
@@ -107,13 +94,23 @@ function AdminManager(token) {
                     $(`#row_${response.id}`).remove();
                 }
             },
-            error: function (xhr, status, error) {
-                console.log("AJAX request error!");
-                console.log("  xhr:");
-                console.log(xhr);
-                console.log("  status=" + status);
-                console.log("  error=" + error);
-            }
+            error: processErrorStd
+        });
+    };
+
+    this.importDrinks = function (id) {
+        var url = '/Admin/Import?token=' + tokenId;
+        var data = { id: id };
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            success: function (response) {
+                if (response != null) {
+                    console.log(response);
+                }
+            },
+            error: processErrorStd
         });
     };
 
@@ -124,10 +121,15 @@ function AdminManager(token) {
         makePostRequestSimple(url, data);
     };
 
-
     this.changeCoinCount = function (id) {
         var url = '/Admin/ChangeCoinCount';
         var count = $(`#${id}`).val();
+
+        if (count < 0 || count==="") {
+            alert("Количество монет не может быть отрицательным!");
+            return;
+        }
+
         var data = { id: id, count: count };
         makePostRequestSimple(url, data);
     };
@@ -136,6 +138,12 @@ function AdminManager(token) {
 
         var url = '/Admin/ChangeDrinkCount';
         var count = $(`#dcnt_${id}`).val();
+
+        if (count < 0 || count==="") {
+            alert("Количество напитков не может быть отрицательным!");
+            return;
+        }
+
         var data = { id: id, count: count };
         makePostRequestSimple(url, data);
     };
@@ -150,6 +158,12 @@ function AdminManager(token) {
     this.changeDrinkCost = function (id) {
         var url = '/Admin/ChangeDrinkCost';
         var cost = $(`#dcst_${id}`).val();
+
+        if (cost <= 0) {
+            alert("Цена напитков не может быть отрицательным или равным 0!");
+            return;
+        }
+
         var data = { id: id, cost: cost };
         makePostRequestSimple(url, data);
     };
@@ -159,14 +173,17 @@ function AdminManager(token) {
             type: "POST",
             url: url + "?token=" + tokenId,
             data: data,
-            error: function (xhr, status, error) {
-                console.log("AJAX request error!");
-                console.log("  xhr:");
-                console.log(xhr);
-                console.log("  status=" + status);
-                console.log("  error=" + error);
-            }
+            error: processErrorStd
         });
+    };
+
+    function processErrorStd(xhr, status, error) {
+        console.log("AJAX request error!");
+        console.log("  xhr:");
+        console.log(xhr);
+        console.log("  status=" + status);
+        console.log("  error=" + error);
+        alert(error);
     };
 };
 

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using DrinksVendingMachine.Classes;
-using DrinksVendingMachine.Classes.Entities;
-using DrinksVendingMachine.Models;
+using DrinksVendingMachine.Models.BL;
+using DrinksVendingMachine.Models.BL.Managers;
+using DrinksVendingMachine.Models.Classes;
+using DrinksVendingMachine.Models.DB;
+using DrinksVendingMachine.Models.Entities;
 
 namespace DrinksVendingMachine.Controllers
 {
@@ -13,14 +14,11 @@ namespace DrinksVendingMachine.Controllers
     public class UserController : Controller
     {
         private readonly VengingMachineDbContext _db = new VengingMachineDbContext();
-
-        private readonly DrinkManager drinkManager;
-        private readonly CoinManager coinManager;
+        private readonly VengineMachine _vengineMachine;
 
         public UserController()
         {
-            drinkManager = new DrinkManager(new DbSetRepository<DrinkEntity>(_db.DrinkEntities));
-            coinManager = new CoinManager(new DbSetRepository<CoinEntity>(_db.CoinsEntities));
+            _vengineMachine = new VengineMachine(new DbSetRepository<DrinkEntity>(_db.DrinkEntities), new DbSetRepository<CoinEntity>(_db.CoinsEntities));
         }
 
         // GET: User
@@ -38,58 +36,41 @@ namespace DrinksVendingMachine.Controllers
             return View("Index", model);
         }
 
+        [HttpPost]
         public JsonResult AddCoin(Guid id)
         {
-            CoinEntity coinEntity = _db.CoinsEntities.FirstOrDefault(c => c.Id == id);
+            CoinEntity coinEntity = _db.CoinsEntities.First(c => c.Id == id);
             CurrentStateEntity currentState = _db.CurrentStateEntities.First();
 
-            if (coinEntity != null)
-            {
-                coinEntity.Count++;
-                currentState.Deposit += (int)coinEntity.Value;
-            }
+            _vengineMachine.AddCoin(coinEntity, currentState);
             _db.SaveChanges();
 
             return Json(new { deposit = currentState.Deposit });
         }
 
-
+        [HttpPost]
         public JsonResult BuyDrink(Guid id)
         {
-            DrinkEntity drink = _db.DrinkEntities.FirstOrDefault(d => d.Id == id);
+            DrinkEntity drink = _db.DrinkEntities.First(d => d.Id == id);
             CurrentStateEntity currentState = _db.CurrentStateEntities.First();
 
-            if (drink != null)
-            {
-                drinkManager.BuyDrink(drink);
-                currentState.Change += currentState.Deposit - drink.CostPrice;
-                currentState.Deposit = 0;
-            }
-
+            _vengineMachine.BuyDrink(drink, currentState);
             _db.SaveChanges();
 
             return Json(new { change = currentState.Change });
         }
 
+        [HttpGet]
         public void GetChange()
         {
             CurrentStateEntity currentState = _db.CurrentStateEntities.First();
-            List<CoinEntity> coins = _db.CoinsEntities.OrderByDescending(c=> (int) c.Value).ToList();
+            _vengineMachine.GetChange(currentState);
+            _db.SaveChanges();
+        }
 
-            var change = currentState.Change;
-            IList<Coin> results = VendingMachine.Calculate(coins, change);
-
-            if (results != null)
-            {
-                foreach (var coin in results)
-                {
-                    CoinEntity coinEntity = coins.FirstOrDefault(c => (int) c.Value == coin.Value);
-                    if (coinEntity != null) coinEntity.Count -= coin.Count;
-                }
-
-                currentState.Change = 0;
-                _db.SaveChanges();
-            }
+        protected override void OnException(ExceptionContext filterContext)
+        {
+//            ExceptionHelper.HandleException(filterContext, logger);
         }
     }
 }

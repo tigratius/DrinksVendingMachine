@@ -1,12 +1,10 @@
-﻿@model DrinksVendingMachine.Models.ModelView
+﻿@model DrinksVendingMachine.Models.Classes.ModelView
 
 @{
     ViewBag.Title = "Автомат по продаже напитков";
 }
 
-@*<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>*@
-
-<script type="text/javascript" src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="~/Scripts/js/user.js"></script>
 
 <h2>Монетоприемник</h2>
 <div id="coins-button-container">
@@ -19,16 +17,16 @@
         }
         else
         {
-            <button style="width: 100px;" onclick="addCoin('@item.Id')">@((int)item.Value)</button>
+            <button style="width: 100px;" onclick="userManager.addCoin('@item.Id')">@((int)item.Value)</button>
         }
     }
 
     <p style="margin-top: 20px">Внесенная сумма:<span id="totalSum" style="font-weight: bold; font-size: 15pt">0</span> р.</p>
     <p style="margin-top: 20px">Сдача:<span id="change" style="font-weight: bold; font-size: 15pt">0</span> р.</p>
 
-    <button id="button-buy" disabled="disabled" onclick="buy()">Купить</button>
-    <button id="button-cancel" disabled="disabled" onclick="cancel()">Отмена</button>
-    <button id="button-take-money" disabled="disabled" onclick="takeMoney()">Забрать сдачу</button>
+    <button id="button-buy" disabled="disabled" onclick="userManager.buy()">Купить</button>
+    <button id="button-cancel" disabled="disabled" onclick="userManager.cancel()">Отмена</button>
+    <button id="button-take-money" disabled="disabled" onclick="userManager.takeMoney()">Забрать сдачу</button>
 
 </div>
 
@@ -37,7 +35,7 @@
     @foreach (var item in Model.Drinks)
     {
         <div id="drinkInfo" style="display: inline-block;">
-            <img id="img_@item.Id" class="img img-hover" src="/Content/Images/@item.Image" onclick="imageClick('@item.Id', '@item.CostPrice', @item.Count)" />
+            <img id="img_@item.Id" class="img img-hover" src="/Content/Images/@item.Image" onclick="userManager.imageClick('@item.Id', '@item.CostPrice', @item.Count)" />
             <p>@item.CostPrice</p>
         </div>
     }
@@ -45,6 +43,8 @@
 </div>
 
 <script type="text/javascript">
+
+    var userManager = new UserManager();
 
     $(document).ready(function () {
         $("#totalSum").text(@Model.Deposit);
@@ -54,96 +54,5 @@
         }
     });
 
-    imageClick = function(id, cost, count) {
 
-        var totalSum = parseInt($('#totalSum').text());
-        var c = parseInt(cost);
-        var cnt = parseInt(count);
-
-        if (totalSum < c || cnt < 1) {
-            return;
-        }
-
-        var image = $(`#img_${id}`);
-
-        if (!image.hasClass('img-hover')) {
-            return;
-        } else {
-            image.addClass('img-choosen');
-            $("#drinkInfo img").removeClass('img-hover');
-            $("#button-buy").removeProp('disabled');
-            $("#button-cancel").removeProp('disabled');
-            $("#drink-id").val(id);
-        };
-    }
-
-    cancel = function() {
-        $("#drinkInfo img").removeClass('img-choosen');
-        $("#drinkInfo img").addClass('img-hover');
-        $("#button-buy").prop('disabled', true);
-        $("#button-cancel").prop('disabled', true);
-        $("#drink-id").val("");
-    }
-
-    buy = function() {
-        var url = '/User/BuyDrink';
-        var id = $("#drink-id").val();
-        var data = { id: id };
-        
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: data,
-            success: function(response) {
-                if (response != null) {
-                    $("#totalSum").text(0);
-                    $("#change").text(response.change);
-                    if (response.change > 0) {
-                        $("#button-take-money").removeProp('disabled');
-                    }
-                    cancel();
-                }
-            },
-            error: processErrorStd
-        });
-    }
-
-    takeMoney = function() {
-        var url = '/User/GetChange';
-        $.ajax({
-            type: "GET",
-            url: url,
-            success: function() {
-                $("#button-take-money").prop('disabled', true);
-                $("#change").text(0);
-            },
-            error: processErrorStd
-        });
-    }
-
-    addCoin = function(id) {
-        var url = '/User/AddCoin';
-        var data = { id: id };
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: data,
-            success: function(response) {
-                if (response != null) {
-                    $("#totalSum").text(response.deposit);
-                    $("#button-take-money").prop('disabled', true);
-                }
-            },
-            error: processErrorStd
-        });
-    };
-
-    processErrorStd = function(xhr, status, error) {
-        console.log("AJAX request error!");
-        console.log("  xhr:");
-        console.log(xhr);
-        console.log("  status=" + status);
-        console.log("  error=" + error);
-        alert(error);
-    };
 </script>

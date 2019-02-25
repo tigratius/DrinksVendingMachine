@@ -39,16 +39,10 @@ textarea {
     border: 5px solid #900;
 }
 
-/*.img:focus {
-    cursor: pointer;
-    border: 5px solid #900;
-}
-}*/
-
 .img-choosen {
     border: 5px solid #900;
 }
 
-.disabled {
- 
+input[type=file]::-webkit-file-upload-button {
+    cursor: pointer;
 }

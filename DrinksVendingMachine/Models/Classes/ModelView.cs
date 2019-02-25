@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using DrinksVendingMachine.Classes.Entities;
+﻿using System.Collections.Generic;
+using DrinksVendingMachine.Models.Entities;
 
-namespace DrinksVendingMachine.Models
+namespace DrinksVendingMachine.Models.Classes
 {
     public class ModelView
     {

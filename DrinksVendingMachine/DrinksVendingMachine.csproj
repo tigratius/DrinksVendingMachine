@@ -107,9 +107,8 @@
     <Content Include="Content\Images\pepsi.png" />
     <Content Include="Content\Site.css" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\ajax\errorlog.js" />
-    <Content Include="Scripts\ajax\admin.js" />
-    <Content Include="Scripts\ajax\user.js" />
+    <Content Include="Scripts\js\admin.js" />
+    <Content Include="Scripts\js\user.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
@@ -117,23 +116,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Classes\AuthorizeByToken.cs" />
-    <Compile Include="Classes\Entities\CurrentStateEntity.cs" />
-    <Compile Include="Classes\VengingMachineDbInitializer.cs" />
-    <Compile Include="Classes\VengingMachineDbContext.cs" />
-    <Compile Include="Classes\CoinManager.cs" />
-    <Compile Include="Classes\Entities\CoinEntity.cs" />
-    <Compile Include="Classes\Entities\DrinkEntity.cs" />
-    <Compile Include="Classes\DrinkManager.cs" />
-    <Compile Include="Classes\Repository.cs" />
+    <Compile Include="Models\Attributes\AuthorizeByToken.cs" />
+    <Compile Include="Models\BL\Importers\CsvImport.cs" />
+    <Compile Include="Models\BL\Managers\FileManager.cs" />
+    <Compile Include="Models\BL\VengineMachine.cs" />
+    <Compile Include="Models\Interfaces\IStrategy.cs" />
+    <Compile Include="Models\Classes\Drink.cs" />
+    <Compile Include="Models\Entities\CurrentStateEntity.cs" />
+    <Compile Include="Models\DB\VengingMachineDbInitializer.cs" />
+    <Compile Include="Models\DB\VengingMachineDbContext.cs" />
+    <Compile Include="Models\BL\Managers\CoinManager.cs" />
+    <Compile Include="Models\Entities\CoinEntity.cs" />
+    <Compile Include="Models\Entities\DrinkEntity.cs" />
+    <Compile Include="Models\BL\Managers\DrinkManager.cs" />
+    <Compile Include="Models\DB\Repository.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\ModelView.cs" />
-    <Compile Include="Models\Coin.cs" />
-    <Compile Include="Models\Drink.cs" />
+    <Compile Include="Models\Classes\ModelView.cs" />
+    <Compile Include="Models\Classes\Coin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

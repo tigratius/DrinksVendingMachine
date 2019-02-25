@@ -1,7 +1,7 @@
 ﻿using System.Data.Entity;
-using DrinksVendingMachine.Classes.Entities;
+using DrinksVendingMachine.Models.Entities;
 
-namespace DrinksVendingMachine.Classes
+namespace DrinksVendingMachine.Models.DB
 {
     public class VengingMachineDbContext : DbContext
     {

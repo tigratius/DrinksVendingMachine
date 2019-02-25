@@ -1,8 +1,6 @@
-﻿/*
-using System;
+﻿using System;
 using System.Collections.Generic;
 using DrinksVendingMachine.Models.BL;
-using DrinksVendingMachine.Models.BL.Managers;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -10,73 +8,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace UnitTests
 {
     [TestClass]
-    public class TestDrinkLogic 
+    public class TestVengineMachineLogic : FakeData
     {
-        private List<DrinkEntity> _drinkEntitiesList;
-
-        private DrinkEntity _drink1;
-        private DrinkEntity _drink2;
-
-        private CoinEntity _coin1;
-        private CoinEntity _coin2;
-
-        private CurrentStateEntity _currentState;
-        private VengineMachine _vengineMachine;
-
-        private FakeRepository<DrinkEntity> _repositoryDrink;
-
-        public void Init()
-        {
-            _drink1 = new DrinkEntity()
-            {
-                CostPrice = 10,
-                Count = 2,
-                Id = Guid.Parse("FFDF9A9C-1FC1-4DEB-B552-45EB5E0EC48C"),
-                Image = "image1",
-                Name = "drink1"
-            };
-
-            _drink2 = new DrinkEntity()
-            {
-                CostPrice = 20,
-                Count = 4,
-                Id = Guid.NewGuid(),
-                Image = "image2",
-                Name = "drink2"
-            };
-
-            _coin1 = new CoinEntity()
-            {
-                Id = Guid.NewGuid(),
-                Count = 10,
-                IsBlocking = false,
-                Value = ValueCoins.One
-            };
-
-            _coin2 = new CoinEntity()
-            {
-                Id = Guid.NewGuid(),
-                Count = 10,
-                IsBlocking = true,
-                Value = ValueCoins.Two
-            };
-
-            _currentState = new CurrentStateEntity()
-            {
-                Change = 0,
-                Deposit = 0
-            };
-
-            _drinkEntitiesList = new List<DrinkEntity> {_drink1, _drink2};
-            var _coinEntitiesList = new List<CoinEntity> { _coin1, _coin2};
-
-            _repositoryDrink = new FakeRepository<DrinkEntity>(_drinkEntitiesList);
-            var _repositoryCoin = new FakeRepository<CoinEntity>(_coinEntitiesList);
-
-            _vengineMachine = new VengineMachine(_repositoryDrink, _repositoryCoin);
-
-        }
-        
         [TestMethod]
         public void DrinkAdd()
         {
@@ -195,7 +128,7 @@ namespace UnitTests
 
             Assert.AreEqual(2, _drink1.Count);
             Assert.AreEqual(4, _drink2.Count);
-            
+
         }
 
         [TestMethod]
@@ -207,6 +140,41 @@ namespace UnitTests
             Assert.AreEqual(9, _coin1.Count);
             Assert.AreEqual(8, _coin2.Count);
         }
+
+        [TestMethod]
+        public void ChangeCoinCount()
+        {
+            Init();
+
+            _vengineMachine.ChangeCoinCount(_coin1, 20);
+
+            Assert.AreEqual(20, _coin1.Count);
+        }
+
+        [TestMethod]
+        public void AddThreeCoin()
+        {
+            Init();
+
+            _vengineMachine.AddCoin(_coin1, _currentState);
+            _vengineMachine.AddCoin(_coin1, _currentState);
+            _vengineMachine.AddCoin(_coin2, _currentState);
+
+            Assert.AreEqual(12, _coin1.Count);
+            Assert.AreEqual(11, _coin2.Count);
+            Assert.AreEqual(4, _currentState.Deposit);
+        }
+
+        [TestMethod]
+        public void BlockUnblock()
+        {
+            Init();
+
+            _vengineMachine.Block(_coin1);
+            _vengineMachine.UnBlock(_coin2);
+
+            Assert.IsTrue(_coin1.IsBlocking);
+            Assert.IsFalse(_coin2.IsBlocking);
+        }
     }
 }
-*/

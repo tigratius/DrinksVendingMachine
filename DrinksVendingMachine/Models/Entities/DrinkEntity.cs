@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DrinksVendingMachine.Classes.Entities
+namespace DrinksVendingMachine.Models.Entities
 {
     public class DrinkEntity
     {
