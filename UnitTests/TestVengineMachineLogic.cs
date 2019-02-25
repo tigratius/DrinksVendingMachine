@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using DrinksVendingMachine.Models.BL;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,10 +22,10 @@ namespace UnitTests
                 Name = "drink3"
             };
 
-            _vengineMachine.Add(drink3);
-            _repositoryDrink.SaveChanges();
+            VengineMachine.Add(drink3);
+            RepositoryDrink.SaveChanges();
 
-            Assert.AreEqual(3, _drinkEntitiesList.Count);
+            Assert.AreEqual(3, DrinkEntitiesList.Count);
         }
 
         [TestMethod]
@@ -35,11 +33,11 @@ namespace UnitTests
         {
             Init();
 
-            DrinkEntity drink1 = _drinkEntitiesList[0];
-            _vengineMachine.Remove(drink1);
+            DrinkEntity drink1 = DrinkEntitiesList[0];
+            VengineMachine.Remove(drink1);
 
-            _repositoryDrink.SaveChanges();
-            Assert.AreEqual(1, _drinkEntitiesList.Count);
+            RepositoryDrink.SaveChanges();
+            Assert.AreEqual(1, DrinkEntitiesList.Count);
         }
 
         [TestMethod]
@@ -47,8 +45,8 @@ namespace UnitTests
         {
             Init();
 
-            _vengineMachine.ChangeCount(_drink1, 8);
-            Assert.AreEqual(8, _drink1.Count);
+            VengineMachine.ChangeCount(Drink1, 8);
+            Assert.AreEqual(8, Drink1.Count);
         }
 
         [TestMethod]
@@ -56,8 +54,8 @@ namespace UnitTests
         {
             Init();
 
-            DrinkEntity drink1 = _drinkEntitiesList[0];
-            _vengineMachine.ChangeCost(drink1, 50);
+            DrinkEntity drink1 = DrinkEntitiesList[0];
+            VengineMachine.ChangeCost(drink1, 50);
 
             Assert.AreEqual(50, drink1.CostPrice);
         }
@@ -67,8 +65,8 @@ namespace UnitTests
         {
             Init();
 
-            _vengineMachine.ChangeImage(_drink1, "filename1");
-            Assert.AreEqual("filename1", _drink1.Image);
+            VengineMachine.ChangeImage(Drink1, "filename1");
+            Assert.AreEqual("filename1", Drink1.Image);
         }
 
         [TestMethod]
@@ -76,10 +74,10 @@ namespace UnitTests
         {
             Init();
 
-            _currentState.Deposit = 15;
-            _vengineMachine.BuyDrink(_drink1, _currentState);
-            Assert.AreEqual(1, _drink1.Count);
-            Assert.AreEqual(5, _currentState.Change);
+            CurrentState.Deposit = 15;
+            VengineMachine.BuyDrink(Drink1, CurrentState);
+            Assert.AreEqual(1, Drink1.Count);
+            Assert.AreEqual(5, CurrentState.Change);
         }
 
         [TestMethod]
@@ -87,12 +85,12 @@ namespace UnitTests
         {
             Init();
 
-            _coin1.Count = 0;
-            _currentState.Deposit = 15;
+            Coin1.Count = 0;
+            CurrentState.Deposit = 15;
 
-            _vengineMachine.BuyDrink(_drink1, _currentState);
-            Assert.AreEqual(2, _drink1.Count);
-            Assert.AreEqual(15, _currentState.Change);
+            VengineMachine.BuyDrink(Drink1, CurrentState);
+            Assert.AreEqual(2, Drink1.Count);
+            Assert.AreEqual(15, CurrentState.Change);
         }
 
         [TestMethod]
@@ -101,33 +99,33 @@ namespace UnitTests
             Init();
 
             {
-                _drink1.CostPrice = 2;
-                _drink1.Count = 3;
+                Drink1.CostPrice = 2;
+                Drink1.Count = 3;
             }
             {
-                _drink2.CostPrice = 3;
-                _drink2.Count = 5;
+                Drink2.CostPrice = 3;
+                Drink2.Count = 5;
             }
 
             {
             }
-            _vengineMachine.AddCoin(_coin2, _currentState);
-            _vengineMachine.AddCoin(_coin2, _currentState);
+            VengineMachine.AddCoin(Coin2, CurrentState);
+            VengineMachine.AddCoin(Coin2, CurrentState);
 
-            _vengineMachine.BuyDrink(_drink1, _currentState);
+            VengineMachine.BuyDrink(Drink1, CurrentState);
 
-            Assert.AreEqual(2, _currentState.Change);
+            Assert.AreEqual(2, CurrentState.Change);
 
-            _vengineMachine.AddCoin(_coin2, _currentState);
-            _vengineMachine.AddCoin(_coin1, _currentState);
-            _vengineMachine.AddCoin(_coin1, _currentState);
+            VengineMachine.AddCoin(Coin2, CurrentState);
+            VengineMachine.AddCoin(Coin1, CurrentState);
+            VengineMachine.AddCoin(Coin1, CurrentState);
 
-            _vengineMachine.BuyDrink(_drink2, _currentState);
+            VengineMachine.BuyDrink(Drink2, CurrentState);
 
-            Assert.AreEqual(3, _currentState.Change);
+            Assert.AreEqual(3, CurrentState.Change);
 
-            Assert.AreEqual(2, _drink1.Count);
-            Assert.AreEqual(4, _drink2.Count);
+            Assert.AreEqual(2, Drink1.Count);
+            Assert.AreEqual(4, Drink2.Count);
 
         }
 
@@ -135,10 +133,10 @@ namespace UnitTests
         public void GetChange()
         {
             Init();
-            _currentState.Change = 5;
-            _vengineMachine.GetChange(_currentState);
-            Assert.AreEqual(9, _coin1.Count);
-            Assert.AreEqual(8, _coin2.Count);
+            CurrentState.Change = 5;
+            VengineMachine.GetChange(CurrentState);
+            Assert.AreEqual(9, Coin1.Count);
+            Assert.AreEqual(8, Coin2.Count);
         }
 
         [TestMethod]
@@ -146,9 +144,9 @@ namespace UnitTests
         {
             Init();
 
-            _vengineMachine.ChangeCoinCount(_coin1, 20);
+            VengineMachine.ChangeCoinCount(Coin1, 20);
 
-            Assert.AreEqual(20, _coin1.Count);
+            Assert.AreEqual(20, Coin1.Count);
         }
 
         [TestMethod]
@@ -156,13 +154,13 @@ namespace UnitTests
         {
             Init();
 
-            _vengineMachine.AddCoin(_coin1, _currentState);
-            _vengineMachine.AddCoin(_coin1, _currentState);
-            _vengineMachine.AddCoin(_coin2, _currentState);
+            VengineMachine.AddCoin(Coin1, CurrentState);
+            VengineMachine.AddCoin(Coin1, CurrentState);
+            VengineMachine.AddCoin(Coin2, CurrentState);
 
-            Assert.AreEqual(12, _coin1.Count);
-            Assert.AreEqual(11, _coin2.Count);
-            Assert.AreEqual(4, _currentState.Deposit);
+            Assert.AreEqual(12, Coin1.Count);
+            Assert.AreEqual(11, Coin2.Count);
+            Assert.AreEqual(4, CurrentState.Deposit);
         }
 
         [TestMethod]
@@ -170,11 +168,11 @@ namespace UnitTests
         {
             Init();
 
-            _vengineMachine.Block(_coin1);
-            _vengineMachine.UnBlock(_coin2);
+            VengineMachine.Block(Coin1);
+            VengineMachine.UnBlock(Coin2);
 
-            Assert.IsTrue(_coin1.IsBlocking);
-            Assert.IsFalse(_coin2.IsBlocking);
+            Assert.IsTrue(Coin1.IsBlocking);
+            Assert.IsFalse(Coin2.IsBlocking);
         }
     }
 }

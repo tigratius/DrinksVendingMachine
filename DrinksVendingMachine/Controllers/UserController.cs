@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using DrinksVendingMachine.Models.BL;
-using DrinksVendingMachine.Models.BL.Managers;
 using DrinksVendingMachine.Models.Classes;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
+using NLog;
 
 namespace DrinksVendingMachine.Controllers
 {
@@ -16,6 +16,8 @@ namespace DrinksVendingMachine.Controllers
         private readonly VengingMachineDbContext _db = new VengingMachineDbContext();
         private readonly VengineMachine _vengineMachine;
 
+        private static readonly Logger Logger = LogManager.GetLogger("UserController");
+
         public UserController()
         {
             _vengineMachine = new VengineMachine(new DbSetRepository<DrinkEntity>(_db.DrinkEntities), new DbSetRepository<CoinEntity>(_db.CoinsEntities));
@@ -24,6 +26,8 @@ namespace DrinksVendingMachine.Controllers
         // GET: User
         public ActionResult Index()
         {
+            Logger.Info(" Index() called...");
+
             ModelView model =
                 new ModelView
                 {
@@ -39,10 +43,15 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult AddCoin(Guid id)
         {
+            Logger.Info(" AddCoin() called...");
+            Logger.Info(" id = " + id);
+
             CoinEntity coinEntity = _db.CoinsEntities.First(c => c.Id == id);
             CurrentStateEntity currentState = _db.CurrentStateEntities.First();
 
             _vengineMachine.AddCoin(coinEntity, currentState);
+
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
 
             return Json(new { deposit = currentState.Deposit });
@@ -51,10 +60,15 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult BuyDrink(Guid id)
         {
+            Logger.Info(" BuyDrink() called...");
+            Logger.Info(" id = " + id);
+
             DrinkEntity drink = _db.DrinkEntities.First(d => d.Id == id);
             CurrentStateEntity currentState = _db.CurrentStateEntities.First();
 
             _vengineMachine.BuyDrink(drink, currentState);
+
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
 
             return Json(new { change = currentState.Change });
@@ -63,8 +77,12 @@ namespace DrinksVendingMachine.Controllers
         [HttpGet]
         public void GetChange()
         {
+            Logger.Info(" GetChange() called...");
+
             CurrentStateEntity currentState = _db.CurrentStateEntities.First();
             _vengineMachine.GetChange(currentState);
+
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
         }
 

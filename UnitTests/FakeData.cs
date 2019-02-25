@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DrinksVendingMachine.Models.BL;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
@@ -11,24 +8,24 @@ namespace UnitTests
 {
     public class FakeData
     {
-        protected List<DrinkEntity> _drinkEntitiesList;
+        protected List<DrinkEntity> DrinkEntitiesList;
 
-        protected DrinkEntity _drink1;
-        protected DrinkEntity _drink2;
+        protected DrinkEntity Drink1;
+        protected DrinkEntity Drink2;
 
-        protected CoinEntity _coin1;
-        protected CoinEntity _coin2;
-        protected CoinEntity _coin3;
-        protected CoinEntity _coin4;
+        protected CoinEntity Coin1;
+        protected CoinEntity Coin2;
+        protected CoinEntity Coin3;
+        protected CoinEntity Coin4;
 
-        protected CurrentStateEntity _currentState;
-        protected VengineMachine _vengineMachine;
+        protected CurrentStateEntity CurrentState;
+        protected VengineMachine VengineMachine;
 
-        protected FakeRepository<DrinkEntity> _repositoryDrink;
+        protected FakeRepository<DrinkEntity> RepositoryDrink;
 
         public virtual void Init()
         {
-            _drink1 = new DrinkEntity()
+            Drink1 = new DrinkEntity()
             {
                 CostPrice = 10,
                 Count = 2,
@@ -37,7 +34,7 @@ namespace UnitTests
                 Name = "drink1"
             };
 
-            _drink2 = new DrinkEntity()
+            Drink2 = new DrinkEntity()
             {
                 CostPrice = 20,
                 Count = 4,
@@ -46,7 +43,7 @@ namespace UnitTests
                 Name = "drink2"
             };
 
-            _coin1 = new CoinEntity()
+            Coin1 = new CoinEntity()
             {
                 Id = Guid.NewGuid(),
                 Count = 10,
@@ -54,7 +51,7 @@ namespace UnitTests
                 Value = ValueCoins.One
             };
 
-            _coin2 = new CoinEntity()
+            Coin2 = new CoinEntity()
             {
                 Id = Guid.NewGuid(),
                 Count = 10,
@@ -62,19 +59,19 @@ namespace UnitTests
                 Value = ValueCoins.Two
             };
 
-            _currentState = new CurrentStateEntity()
+            CurrentState = new CurrentStateEntity()
             {
                 Change = 0,
                 Deposit = 0
             };
 
-            _drinkEntitiesList = new List<DrinkEntity> { _drink1, _drink2 };
-            var _coinEntitiesList = new List<CoinEntity> { _coin1, _coin2 };
+            DrinkEntitiesList = new List<DrinkEntity> { Drink1, Drink2 };
+            var coinEntitiesList = new List<CoinEntity> { Coin1, Coin2 };
 
-            _repositoryDrink = new FakeRepository<DrinkEntity>(_drinkEntitiesList);
-            var _repositoryCoin = new FakeRepository<CoinEntity>(_coinEntitiesList);
+            RepositoryDrink = new FakeRepository<DrinkEntity>(DrinkEntitiesList);
+            var repositoryCoin = new FakeRepository<CoinEntity>(coinEntitiesList);
 
-            _vengineMachine = new VengineMachine(_repositoryDrink, _repositoryCoin);
+            VengineMachine = new VengineMachine(RepositoryDrink, repositoryCoin);
 
         }
     }

@@ -2,7 +2,6 @@
 using System.Linq;
 using DrinksVendingMachine.Models.BL;
 using DrinksVendingMachine.Models.Classes;
-using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

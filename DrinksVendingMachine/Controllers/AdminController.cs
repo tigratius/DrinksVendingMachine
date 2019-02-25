@@ -11,6 +11,7 @@ using DrinksVendingMachine.Models.Classes;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
 using DrinksVendingMachine.Models.Interfaces;
+using NLog;
 
 namespace DrinksVendingMachine.Controllers
 {
@@ -25,6 +26,8 @@ namespace DrinksVendingMachine.Controllers
         private readonly IStrategy _strategy = new CsvImport();
         private const string ImageStoragePath = "~/Content/Images/";
 
+        private static readonly Logger Logger = LogManager.GetLogger("AdminController");
+
         public AdminController()
         {
             _vengineMachine = new VengineMachine(new DbSetRepository<DrinkEntity>(_db.DrinkEntities), new DbSetRepository<CoinEntity>(_db.CoinsEntities));
@@ -34,6 +37,8 @@ namespace DrinksVendingMachine.Controllers
         // GET: Admin
         public ActionResult Index()
         {
+            Logger.Info(" Index() called...");
+
             ModelView model =
                 new ModelView
                 {
@@ -48,8 +53,15 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult AddDrink(string name, int cost, int count, string img)
         {
+            Logger.Info(" AddDrink() called...");
+            Logger.Info("   name = " + name);
+            Logger.Info("   cost = " + cost);
+            Logger.Info("   count = " + count);
+            Logger.Info("   img = " + img);
+
             if (cost <= 0 || count < 0)
             {
+                Logger.Error(" Ошибка в данных! cost <= 0 || count < 0");
                 return Json("Error");
             }
 
@@ -64,6 +76,7 @@ namespace DrinksVendingMachine.Controllers
 
             _vengineMachine.Add(drinkEntity);
 
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
 
             return Json(new { id = drinkEntity.Id, name, cost, count, img });
@@ -72,10 +85,14 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult RemoveDrink(Guid id)
         {
+            Logger.Info(" RemoveDrink() called...");
+            Logger.Info("   id = " + id);
+
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
 
             _vengineMachine.Remove(drinkEntity);
 
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
 
             return Json(new {id });
@@ -84,33 +101,49 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public void ChangeDrinkName(Guid id, string name)
         {
+            Logger.Info(" ChangeDrinkName() called...");
+            Logger.Info("   id = " + id);
+            Logger.Info("   name = " + name);
+
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
 
             _vengineMachine.ChangeName(drinkEntity, name);
 
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
         }
 
         [HttpPost]
         public void ChangeDrinkCount(Guid id, int count)
         {
+            Logger.Info(" ChangeDrinkName() called...");
+            Logger.Info("   id = " + id);
+            Logger.Info("   count = " + count);
+
             if (count < 0)
             {
-              return;
+                Logger.Error(" Ошибка в данных! count < 0");
+                return;
             }
 
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
 
             _vengineMachine.ChangeCount(drinkEntity, count);
 
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
         }
 
         [HttpPost]
         public void ChangeDrinkCost(Guid id, int cost)
         {
+            Logger.Info(" ChangeDrinkName() called...");
+            Logger.Info("   id = " + id);
+            Logger.Info("   cost = " + cost);
+
             if (cost <= 0)
             {
+                Logger.Error(" Ошибка в данных! cost <= 0");
                 return;
             }
             
@@ -118,16 +151,22 @@ namespace DrinksVendingMachine.Controllers
 
             _vengineMachine.ChangeCost(drinkEntity, cost);
 
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
         }
 
         [HttpPost]
         public JsonResult ChangeDrinkImage(Guid id, string filename)
         {
+            Logger.Info(" ChangeDrinkImage() called...");
+            Logger.Info("   id = " + id);
+            Logger.Info("   filename = " + filename);
+
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
 
             _vengineMachine.ChangeImage(drinkEntity, filename);
 
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
 
             return Json(new { id, filename });
@@ -136,8 +175,13 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public void ChangeCoinCount(Guid id, int count)
         {
-            if (count <= 0)
+            Logger.Info(" ChangeCoinCount() called...");
+            Logger.Info("   id = " + id);
+            Logger.Info("   count = " + count);
+
+            if (count < 0)
             {
+                Logger.Error(" Ошибка в данных! count <= 0");
                 return;
             }
 
@@ -145,12 +189,17 @@ namespace DrinksVendingMachine.Controllers
 
             _vengineMachine.ChangeCoinCount(coinEntity, count);
 
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
         }
 
         [HttpPost]
         public void ChangeBlocking(Guid id, bool isBlocking)
         {
+            Logger.Info(" ChangeBlocking() called...");
+            Logger.Info("   id = " + id);
+            Logger.Info("   isBlocking = " + isBlocking);
+
             CoinEntity coinEntity = _db.CoinsEntities.First(c => c.Id == id);
 
             if (isBlocking)
@@ -162,12 +211,15 @@ namespace DrinksVendingMachine.Controllers
                 _vengineMachine.UnBlock(coinEntity);
             }
 
+            Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
         }
 
         [HttpPost]
         public JsonResult Upload()
         {
+            Logger.Info(" Upload() called...");
+
             var upload = Request.Files[0];
             string fileName = "";
             if (upload != null)
@@ -178,8 +230,13 @@ namespace DrinksVendingMachine.Controllers
                 }
                 else
                 {
+                    Logger.Error("Загружаемый файл " + upload.FileName + " не является картинкой!");
                     //вывести ошибку
                 }
+            }
+            else
+            {
+                Logger.Error("upload == null");
             }
 
             return Json(new { filename = fileName });
@@ -188,9 +245,15 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public ActionResult Import(HttpPostedFileBase upload)
         {
+            Logger.Info(" Import() called...");
+
             if (upload != null)
             {
+                Logger.Info(" upload.FileName = " + upload.FileName);
+
+                Logger.Info(" import started...");
                 List<Drink> drinks = _fileManager.Import(upload.InputStream);
+                Logger.Info(" import ended...");
 
                 if (drinks != null)
                 {
@@ -211,12 +274,18 @@ namespace DrinksVendingMachine.Controllers
                         _vengineMachine.Add(drinkEntity);
                     }
 
+                    Logger.Info(" before _db.SaveChanges()...");
                     _db.SaveChanges();
                 }
                 else
                 {
+                    Logger.Error("Пустые данные!");
                     //вывести ошибку
                 }
+            }
+            else
+            {
+                Logger.Error("upload == null");
             }
 
             return RedirectToAction("Index");
@@ -224,6 +293,9 @@ namespace DrinksVendingMachine.Controllers
 
         private string SaveFile(HttpPostedFileBase postedFile)
         {
+            Logger.Info("SaveFile() called");
+            Logger.Info("postedFile.FileName = " + postedFile.FileName);
+
             var fileName = System.IO.Path.GetFileName(postedFile.FileName);
             postedFile.SaveAs(Server.MapPath(ImageStoragePath + fileName));
             return fileName;
@@ -231,6 +303,8 @@ namespace DrinksVendingMachine.Controllers
 
         private string SaveFile(string fileSource)
         {
+            Logger.Info("SaveFile() called");
+            Logger.Info("fileSource = " + fileSource);
             var fileName = System.IO.Path.GetFileName(fileSource);
             System.IO.File.Copy(fileSource, Server.MapPath(ImageStoragePath + fileName), true);
             return fileName;
@@ -258,6 +332,11 @@ namespace DrinksVendingMachine.Controllers
             }
 
             return true;
+        }
+
+        protected override void OnException(ExceptionContext filterContext)
+        {
+//            ExceptionHelper.HandleException(filterContext, logger);
         }
     }
 }

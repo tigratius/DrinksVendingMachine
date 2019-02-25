@@ -62,8 +62,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="FakeData.cs" />
-    <Compile Include="TestDrinkLogic.cs" />
-    <Compile Include="TestCoinLogic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestGetCoinsForChange.cs" />
     <Compile Include="TestVengineMachineLogic.cs" />
