@@ -52,7 +52,7 @@
 <h2>Напитки</h2>
 
 
-@using (Html.BeginForm("Import", "Admin", null, FormMethod.Post, new { enctype = "multipart/form-data" }))
+@using (Html.BeginForm("Import", "Admin", new { token = @Model.Token }, FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
     <p>Импорт напитков</p>
     <div class="form-group">
@@ -97,7 +97,7 @@
             <tr id="row_@item.Id">
                 <td>
                     <p>
-                        <img id="img_@item.Id" src="/Content/Images/@item.Image" class="img img-hover" onclick="imageClick('@item.Id')" />
+                        <img id="img_@item.Id" src="@item.ImagePath" class="img img-hover" onclick="imageClick('@item.Id')" />
                     </p>
                 </td>
                 <td>

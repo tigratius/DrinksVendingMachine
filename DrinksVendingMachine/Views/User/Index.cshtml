@@ -35,7 +35,7 @@
     @foreach (var item in Model.Drinks)
     {
         <div id="drinkInfo" style="display: inline-block;">
-            <img id="img_@item.Id" class="img img-hover" src="/Content/Images/@item.Image" onclick="userManager.imageClick('@item.Id', '@item.CostPrice', @item.Count)" />
+            <img id="img_@item.Id" class="img img-hover" src="@item.ImagePath" onclick="userManager.imageClick('@item.Id', '@item.CostPrice', @item.Count)" />
             <p>@item.CostPrice</p>
         </div>
     }

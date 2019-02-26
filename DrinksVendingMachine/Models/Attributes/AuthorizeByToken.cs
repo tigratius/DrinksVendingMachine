@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web;
 using System.Web.Mvc;
+using DrinksVendingMachine.Models.Classes;
 
 namespace DrinksVendingMachine.Models.Attributes
 {
@@ -37,21 +38,6 @@ namespace DrinksVendingMachine.Models.Attributes
             {
                 return false;
             }
-        }
-    }
-
-    internal static class ValidatingTokens
-    {
-        private static string tokenId = "7E47356FFB384D69B97335FF0E36BBC2"; 
-
-        public static bool IsTokenValid(string token)
-        {
-            return token == tokenId;
-        }
-
-        public static string GetToken()
-        {
-            return tokenId;
         }
     }
 }

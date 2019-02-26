@@ -41,9 +41,9 @@ namespace DrinksVendingMachine.Models.BL
             drinkEntity.CostPrice = cost;
         }
 
-        public void ChangeImage(DrinkEntity drinkEntity, string filename)
+        public void ChangeImage(DrinkEntity drinkEntity, string path)
         {
-            drinkEntity.Image = filename;
+            drinkEntity.ImagePath = path;
         }
 
         public void ChangeName(DrinkEntity drinkEntity, string name)
@@ -83,14 +83,13 @@ namespace DrinksVendingMachine.Models.BL
             {
                 drink.Count--;
                 currentState.Change += change;
+                return true;
             }
-            else
-            {
-                /*Ситуация, когда в автомате нет сдачи 
-                Нужно предупердить что пр покупке нету сдачи и отдать внесенные средства в качестве сдачи
-                */
-                currentState.Change += deposit;
-            }
+            
+            /*Ситуация, когда в автомате нет сдачи 
+            Нужно предупердить что пр покупке нету сдачи и отдать внесенные средства в качестве сдачи
+            */
+            currentState.Change += deposit;
 
             return false;
         }

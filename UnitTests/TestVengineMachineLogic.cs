@@ -18,7 +18,7 @@ namespace UnitTests
                 CostPrice = 30,
                 Count = 1,
                 Id = Guid.NewGuid(),
-                Image = "image3",
+                ImagePath = "image3",
                 Name = "drink3"
             };
 
@@ -66,7 +66,7 @@ namespace UnitTests
             Init();
 
             VengineMachine.ChangeImage(Drink1, "filename1");
-            Assert.AreEqual("filename1", Drink1.Image);
+            Assert.AreEqual("filename1", Drink1.ImagePath);
         }
 
         [TestMethod]

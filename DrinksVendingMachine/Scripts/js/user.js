@@ -8,7 +8,11 @@
         var c = parseInt(cost);
         var cnt = parseInt(count);
 
-        if (totalSum < c || cnt < 1) {
+        /*if (totalSum < c || cnt < 1) {
+            return;
+        }*/
+
+        if (!validateConditionToBuy(c, cnt, totalSum)) {
             return;
         }
 
@@ -49,6 +53,10 @@
                     if (response.change > 0) {
                         $("#button-take-money").removeProp('disabled');
                     }
+
+                    if (!response.success) {
+                        alert(response.msg);
+                    }
                 }
             },
             error: processErrorStd
@@ -84,6 +92,10 @@
             error: processErrorStd
         });
     };
+
+    function validateConditionToBuy(cost, count, totalSum) {
+        return totalSum >= cost && count > 0;
+    }
 
     function processErrorStd (xhr, status, error) {
         console.log("AJAX request error!");

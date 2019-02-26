@@ -9,7 +9,7 @@ namespace DrinksVendingMachine.Models.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int CostPrice { get; set; }
-        public string Image { get; set; }
+        public string ImagePath { get; set; }
         public int Count { get; set; }
     }
 }

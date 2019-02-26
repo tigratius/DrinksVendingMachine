@@ -8,14 +8,14 @@ function AdminManager(token) {
        this.uploadImage(id, function (response) {
             var url = '/Admin/ChangeDrinkImage?token=' + tokenId;
             var id = $("#hiddenImg").val();
-            var data = { id: id, filename: response.filename };
+            var data = { id: id, path: response.path };
             $.ajax({
                 type: "POST",
                 url: url,
                 data: data,
                 success: function (response) {
                     if (response != null) {
-                        $(`#img_${response.id}`).attr("src", `/Content/Images/${response.filename}`);
+                        $(`#img_${response.id}`).attr("src", `${response.path}`);
                     }
                 },
                 error: processErrorStd
@@ -38,7 +38,14 @@ function AdminManager(token) {
                     processData: false,
                     data: data,
                     success: function (response) {
-                        if (callback) callback(response);
+                        if (response != null) {
+                            if (response.success) {
+                                if (callback) callback(response);
+                            } else {
+//                                console.log(response);
+                                alert(response.message);
+                            }
+                        }
                     },
                     error: processErrorStd
                 });
@@ -56,25 +63,36 @@ function AdminManager(token) {
             var cost = $("#cost").val();
             var count = $("#count").val();
 
-            if (cost <= 0 || count < 0 || count === "") {
+            if (!validateFieldCountAndCost(count, cost)) {
                 alert("Ошибка! Проверьте данные.");
                 return;
             }
 
-            var data = { name: name, cost: cost, count: count, img: response.filename };
+            var data = { name: name, cost: cost, count: count, imgPath: response.path };
             $.ajax({
                 type: "POST",
                 url: url,
                 data: data,
                 success: function (response) {
                     if (response != null) {
-                        var markup =
-                            `<tr id='row_${response.id}'><td><p><img id='img_${response.id}' src='/Content/Images/${response.img}' style='width: 80px; height: 100px; top: 15px; position: relative' onclick="imageClick('${response.id}')" />
-                            </p></td><td><p><input id='dn_${response.id}' type='text' value='${response.name}' onchange="adminManager.changeDrinkName('${response.id}')" />
-                            </p></td><td><p><input id='dcst_${response.id}' value='${response.cost}' onchange="adminManager.changeDrinkCost('${response.id}')" />
-                            </p></td><td><p><input id='dcnt_${response.id}' type='number' value='${response.count}' onchange="adminManager.changeDrinkCount('${response.id}')" />
-                            </p></td><td><p><input type='button' value='Удалить' onclick="adminManager.removeDrink('${response.id}')" /></p></td>`;
-                        $("#drink-table tbody").append(markup);
+                        if (response.success) {
+                            var markup =
+                                `<tr id='row_${response.id}'><td><p><img id='img_${response.id}' src='${
+                                    response.path
+                                    }' style='width: 80px; height: 100px; top: 15px; position: relative' onclick="imageClick('${
+                                    response.id}')" />
+                            </p></td><td><p><input id='dn_${response.id}' type='text' value='${response.name
+                                    }' onchange="adminManager.changeDrinkName('${response.id}')" />
+                            </p></td><td><p><input id='dcst_${response.id}' value='${response.cost
+                                    }' onchange="adminManager.changeDrinkCost('${response.id}')" />
+                            </p></td><td><p><input id='dcnt_${response.id}' type='number' value='${response.count
+                                    }' onchange="adminManager.changeDrinkCount('${response.id}')" />
+                            </p></td><td><p><input type='button' value='Удалить' onclick="adminManager.removeDrink('${
+                                    response.id}')" /></p></td>`;
+                            $("#drink-table tbody").append(markup);
+                        } else {
+                            alert(response.message);
+                        }
                     }
                 },
                 error: processErrorStd
@@ -98,7 +116,7 @@ function AdminManager(token) {
         });
     };
 
-    this.importDrinks = function (id) {
+    /*this.importDrinks = function (id) {
         var url = '/Admin/Import?token=' + tokenId;
         var data = { id: id };
         $.ajax({
@@ -112,7 +130,7 @@ function AdminManager(token) {
             },
             error: processErrorStd
         });
-    };
+    };*/
 
     this.changeBlocking = function (id) {
         var url = '/Admin/ChangeBlocking';
@@ -125,7 +143,7 @@ function AdminManager(token) {
         var url = '/Admin/ChangeCoinCount';
         var count = $(`#${id}`).val();
 
-        if (count < 0 || count==="") {
+        if (!validateFieldCount(count)) {
             alert("Количество монет не может быть отрицательным!");
             return;
         }
@@ -139,7 +157,7 @@ function AdminManager(token) {
         var url = '/Admin/ChangeDrinkCount';
         var count = $(`#dcnt_${id}`).val();
 
-        if (count < 0 || count==="") {
+        if (!validateFieldCount(count)) {
             alert("Количество напитков не может быть отрицательным!");
             return;
         }
@@ -159,7 +177,7 @@ function AdminManager(token) {
         var url = '/Admin/ChangeDrinkCost';
         var cost = $(`#dcst_${id}`).val();
 
-        if (cost <= 0) {
+        if (!validateFieldCost(cost)) {
             alert("Цена напитков не может быть отрицательным или равным 0!");
             return;
         }
@@ -185,6 +203,20 @@ function AdminManager(token) {
         console.log("  error=" + error);
         alert(error);
     };
+
+    function validateFieldCost(cost) {
+        return cost > 0 && cost !== "";
+    }
+
+    function validateFieldCount(count) {
+        return count >= 0 && count !== "";
+    }
+
+    function validateFieldCountAndCost(count, cost) {
+        return validateFieldCost(cost) && validateFieldCount(count);
+    }
+    
+
 };
 
 imageClick = function (id) {

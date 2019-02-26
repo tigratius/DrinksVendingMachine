@@ -66,12 +66,20 @@ namespace DrinksVendingMachine.Controllers
             DrinkEntity drink = _db.DrinkEntities.First(d => d.Id == id);
             CurrentStateEntity currentState = _db.CurrentStateEntities.First();
 
-            _vengineMachine.BuyDrink(drink, currentState);
+            bool success = true;
+            var msg = "";
+
+            if (!_vengineMachine.BuyDrink(drink, currentState))
+            {
+                success = false;
+                msg = "Невозможно совершить покупку! В автомате нет сдачи! Деньги возвращены полностью в качестве сдачи";
+                Logger.Warn(msg);
+            }
 
             Logger.Info(" before _db.SaveChanges()...");
             _db.SaveChanges();
 
-            return Json(new { change = currentState.Change });
+            return Json(new {success, msg, change = currentState.Change });
         }
 
         [HttpGet]
@@ -88,7 +96,9 @@ namespace DrinksVendingMachine.Controllers
 
         protected override void OnException(ExceptionContext filterContext)
         {
-//            ExceptionHelper.HandleException(filterContext, logger);
+            Logger.Error("");
+            Logger.Error("ERROR in " + filterContext.Controller);
+            ExceptionWriter.WriteErrorDetailed(Logger, filterContext.Exception);
         }
     }
 }

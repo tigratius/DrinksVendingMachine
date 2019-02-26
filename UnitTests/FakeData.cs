@@ -30,7 +30,7 @@ namespace UnitTests
                 CostPrice = 10,
                 Count = 2,
                 Id = Guid.Parse("FFDF9A9C-1FC1-4DEB-B552-45EB5E0EC48C"),
-                Image = "image1",
+                ImagePath = "image1",
                 Name = "drink1"
             };
 
@@ -39,7 +39,7 @@ namespace UnitTests
                 CostPrice = 20,
                 Count = 4,
                 Id = Guid.NewGuid(),
-                Image = "image2",
+                ImagePath = "image2",
                 Name = "drink2"
             };
 

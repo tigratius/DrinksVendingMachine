@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using DrinksVendingMachine.Models.Classes;
+using DrinksVendingMachine.Models.DB;
 using NLog;
 
 namespace DrinksVendingMachine
@@ -17,7 +16,8 @@ namespace DrinksVendingMachine
         {
             logger.Info("Application_Start called...");
 
-            /*Database.SetInitializer(new VengingMachineDbInitializer());*/
+/*            logger.Info("Database.SetInitializer called...");
+            Database.SetInitializer(new VengingMachineDbInitializer());*/
 
             AreaRegistration.RegisterAllAreas();
             RouteConfig.RegisterRoutes(RouteTable.Routes);
@@ -32,8 +32,8 @@ namespace DrinksVendingMachine
 
         protected void SaveError(Exception ex)
         {
-         /*   logger.Error("");
-            ExceptionWriter.WriteErrorDetailed(logger, ex);*/
+            logger.Error("");
+            ExceptionWriter.WriteErrorDetailed(logger, ex);
         }
     }
 }

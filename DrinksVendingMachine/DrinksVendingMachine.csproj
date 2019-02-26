@@ -128,6 +128,10 @@
     <Compile Include="Models\BL\Importers\CsvImport.cs" />
     <Compile Include="Models\BL\Managers\FileManager.cs" />
     <Compile Include="Models\BL\VengineMachine.cs" />
+    <Compile Include="Models\Classes\ValidatingTokens.cs" />
+    <Compile Include="Models\Classes\JsonBase.cs" />
+    <Compile Include="Models\Classes\SimpleLoggers.cs" />
+    <Compile Include="Models\Classes\ExceptionWriter.cs" />
     <Compile Include="Models\Interfaces\IStrategy.cs" />
     <Compile Include="Models\Classes\Drink.cs" />
     <Compile Include="Models\Entities\CurrentStateEntity.cs" />
