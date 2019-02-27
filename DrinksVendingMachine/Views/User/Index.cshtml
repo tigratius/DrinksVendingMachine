@@ -3,56 +3,68 @@
 @{
     ViewBag.Title = "Автомат по продаже напитков";
 }
+<style type="text/css">
+    
+</style>
 
 <script type="text/javascript" src="~/Scripts/js/user.js"></script>
 
-<h2>Монетоприемник</h2>
-<div id="coins-button-container">
 
-    @foreach (var item in Model.Coins)
-    {
-        if (item.IsBlocking)
-        {
-            <button style="width: 100px; background: lightcoral; " disabled="disabled">@((int)item.Value)</button>
-        }
-        else
-        {
-            <button style="width: 100px;" onclick="userManager.addCoin('@item.Id')">@((int)item.Value)</button>
-        }
-    }
 
-    <p style="margin-top: 20px">Внесенная сумма:<span id="totalSum" style="font-weight: bold; font-size: 15pt">0</span> р.</p>
-    <p style="margin-top: 20px">Сдача:<span id="change" style="font-weight: bold; font-size: 15pt">0</span> р.</p>
 
-    <button id="button-buy" disabled="disabled" onclick="userManager.buy()">Купить</button>
-    <button id="button-cancel" disabled="disabled" onclick="userManager.cancel()">Отмена</button>
-    <button id="button-take-money" disabled="disabled" onclick="userManager.takeMoney()">Забрать сдачу</button>
+<h1>Автомат по продаже напитков</h1>
+<div class="row">
+    
+    <div class="col-lg-4 col-md-5">
 
+        <h3>Панель управления</h3>
+        <div class="row row-margin">
+
+            @foreach (var item in Model.Coins)
+            {
+                if (item.IsBlocking)
+                {
+                    <button disabled="disabled" class="btn coin-button lightcoral-bg">@((int)item.Value) р.</button>
+                }
+                else
+                {
+                    <button class="btn coin-button btn-default" onclick="userManager.addCoin('@item.Id')">@((int)item.Value) р.</button>
+                }
+            }
+        </div>
+        <div class="row row-margin">
+            <button id="ButtonBuy" disabled="disabled" class="btn btn-default" onclick="userManager.buy()">Купить</button>
+            <button id="ButtonCancel" disabled="disabled" class="btn btn-default" onclick="userManager.cancel()">Отмена</button>
+            <button id="ButtonTakeMoney" disabled="disabled" class="btn btn-default" onclick="userManager.takeMoney()">Забрать сдачу</button>
+        </div>
+    </div>
+
+    <div class="col-lg-2 col-md-5">
+        <h3>Информация</h3>
+        <div class="row row-margin">
+            <p>Внесенная сумма:<span id="TotalSum" class="info-span">0</span> р.</p>
+            <p>Сдача:<span id="Change" class="info-span">0</span> р.</p>
+        </div>
+    </div>
 </div>
 
-<h2>Напитки</h2>
-<div style="width: 50%">
+<h3>Напитки</h3>
+<div class="row row-margin">
     @foreach (var item in Model.Drinks)
     {
-        <div id="drinkInfo" style="display: inline-block;">
-            <img id="img_@item.Id" class="img img-hover" src="@item.ImagePath" onclick="userManager.imageClick('@item.Id', '@item.CostPrice', @item.Count)" />
-            <p>@item.CostPrice</p>
+        <div id="DrinkInfo" class="drink-info">
+            <img id="img_@item.Id" class="img img-hover img-thumbnail" src="@item.ImagePath" onclick="userManager.imageClick('@item.Id', '@item.CostPrice', @item.Count)" alt="" />
+            <p class="costprice">@item.CostPrice р.</p>
         </div>
     }
-    <input type="hidden" id="drink-id">
+    <input type="hidden" id="DrinkId">
 </div>
 
 <script type="text/javascript">
-
-    var userManager = new UserManager();
+    var userManager = null;
 
     $(document).ready(function () {
-        $("#totalSum").text(@Model.Deposit);
-        $("#change").text(@Model.Change);
-        if (@Model.Change > 0 && @Model.Deposit === 0) {
-            $("#button-take-money").removeProp('disabled');
-        }
+        userManager = new UserManager();
+        userManager.init(@Model.Deposit, @Model.Change);
     });
-
-
 </script>

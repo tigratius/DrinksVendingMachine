@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using DrinksVendingMachine.Models.Classes;
 using DrinksVendingMachine.Models.Interfaces;
 
-namespace DrinksVendingMachine.Models.BL.Managers
+namespace DrinksVendingMachine.Models.Classes.Managers
 {
+    //Todo: подумать над названием
     public class FileManager
     {
         private readonly IStrategy _contextStrategy;
@@ -18,6 +18,11 @@ namespace DrinksVendingMachine.Models.BL.Managers
         public List<Drink> Import(Stream stream)
         {
             return _contextStrategy.Import(stream);
+        }
+
+        public bool IsAllowedExtension(string ext)
+        {
+            return _contextStrategy.IsAllowedExtension(ext);
         }
     }
 }

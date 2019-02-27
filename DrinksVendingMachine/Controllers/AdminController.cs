@@ -4,10 +4,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using DrinksVendingMachine.Models.Attributes;
-using DrinksVendingMachine.Models.BL;
-using DrinksVendingMachine.Models.BL.Importers;
-using DrinksVendingMachine.Models.BL.Managers;
 using DrinksVendingMachine.Models.Classes;
+using DrinksVendingMachine.Models.Classes.Importers;
+using DrinksVendingMachine.Models.Classes.json;
+using DrinksVendingMachine.Models.Classes.Managers;
+using DrinksVendingMachine.Models.Classes.Utils;
+using DrinksVendingMachine.Models.Core;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
 using DrinksVendingMachine.Models.Interfaces;
@@ -61,12 +63,12 @@ namespace DrinksVendingMachine.Controllers
 
             if (!ValidateCost(cost))
             {
-                return GetJsonErrorResultCost();
+                return JsonErrorCost();
             }
 
             if (!ValidateCount(count))
             {
-                return GetJsonErrorResultCount();
+                return JsonErrorCount();
             }
 
             DrinkEntity drinkEntity = new DrinkEntity
@@ -127,7 +129,7 @@ namespace DrinksVendingMachine.Controllers
 
             if (!ValidateCount(count))
             {
-                return GetJsonErrorResultCount();
+                return JsonErrorCount();
             }
 
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
@@ -149,7 +151,7 @@ namespace DrinksVendingMachine.Controllers
 
             if (!ValidateCount(cost))
             {
-                return GetJsonErrorResultCost();
+                return JsonErrorCost();
             }
 
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
@@ -188,7 +190,7 @@ namespace DrinksVendingMachine.Controllers
 
             if (!ValidateCount(count))
             {
-                return GetJsonErrorResultCount();
+                return JsonErrorCount();
             }
 
             CoinEntity coinEntity = _db.CoinsEntities.First(c => c.Id == id);
@@ -239,68 +241,84 @@ namespace DrinksVendingMachine.Controllers
                 }
                 else
                 {
-                    var msg = "Загружаемый файл " + upload.FileName + " не является картинкой!";
-                    Logger.Error(msg);
-                    return Json(new JsonError(msg));
+                    return JsonErrorLog("Загружаемый файл " + upload.FileName + " не является картинкой!");
                 }
             }
             else
             {
-                var msg = "Нет данных для загрузки!";
-                Logger.Error(msg);
-                return Json(new JsonError(msg));
+                return JsonErrorEmptyData();
             }
 
             return Json(new { success = true, path });
         }
 
         [HttpPost]
-        public ActionResult Import(HttpPostedFileBase upload)
+        public JsonResult Import()
         {
             Logger.Info(" Import() called...");
+
+            var upload = Request.Files[0];
 
             if (upload != null)
             {
                 Logger.Info(" upload.FileName = " + upload.FileName);
 
-                Logger.Info(" import started...");
-                List<Drink> drinks = _fileManager.Import(upload.InputStream);
-                Logger.Info(" import ended...");
+                var ext = System.IO.Path.GetExtension(upload.FileName);
 
-                if (drinks != null)
+                if (_fileManager.IsAllowedExtension(ext))
                 {
-                    foreach (var drink in drinks)
+                    Logger.Info(" import started...");
+                    List<Drink> drinks = null;
+                    try
                     {
-                        //Сохраняем файл в хранилище
-                        var path = SaveFile(drink.ImgPath);
-
-                        DrinkEntity drinkEntity = new DrinkEntity
-                        {
-                            Id = Guid.NewGuid(),
-                            ImagePath = path,
-                            Name = drink.Name,
-                            Count = drink.Count,
-                            CostPrice = drink.Cost
-                        };
-
-                        _vengineMachine.Add(drinkEntity);
+                        drinks = _fileManager.Import(upload.InputStream);
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error("Неправильная структура файла!");
+                        ExceptionWriter.WriteErrorDetailed(Logger, e);
                     }
 
-                    Logger.Info(" before _db.SaveChanges()...");
-                    _db.SaveChanges();
+                    Logger.Info(" import ended...");
+
+                    if (drinks != null)
+                    {
+                        foreach (var drink in drinks)
+                        {
+                            //Сохраняем файл в хранилище
+                            var path = SaveFile(drink.ImgPath);
+
+                            DrinkEntity drinkEntity = new DrinkEntity
+                            {
+                                Id = Guid.NewGuid(),
+                                ImagePath = path,
+                                Name = drink.Name,
+                                Count = drink.Count,
+                                CostPrice = drink.Cost
+                            };
+
+                            _vengineMachine.Add(drinkEntity);
+                        }
+
+                        Logger.Info(" before _db.SaveChanges()...");
+                        _db.SaveChanges();
+                    }
+                    else
+                    {
+                        return JsonErrorLog("Пустые данные!");
+                    }
                 }
                 else
                 {
-                    //Todo: Подумать нужно ли выводить пользователю эту ошибку
-                    Logger.Error("Пустые данные!");
+                    return JsonErrorLog("Файл имеет неверный формат!");
                 }
             }
             else
             {
-                Logger.Error("Нет данных для загрузки!");
+                return JsonErrorEmptyData();
             }
 
-            return RedirectToAction("Index", new {token = ValidatingTokens.GetToken()});
+            return Json(new JsonSuccess());
         }
 
         #region Utils
@@ -365,18 +383,21 @@ namespace DrinksVendingMachine.Controllers
             return cost > 0;
         }
 
-        private JsonResult GetJsonErrorResultCost()
+        private JsonResult JsonErrorCost()
         {
-            var msg = " Ошибка в данных! Стоимость не может быть меньше, либо равна 0";
-            return GetJsonErrorResult(msg);
+            return JsonErrorLog(" Ошибка в данных! Стоимость не может быть меньше, либо равна 0");
         }
-        private JsonResult GetJsonErrorResultCount()
+        private JsonResult JsonErrorCount()
         {
-            var msg = " Ошибка в данных! Количество не может быть меньше 0";
-            return GetJsonErrorResult(msg);
+            return JsonErrorLog(" Ошибка в данных! Количество не может быть меньше 0");
         }
 
-        private JsonResult GetJsonErrorResult(string msg)
+        private JsonResult JsonErrorEmptyData()
+        {
+            return JsonErrorLog("Нет данных для загрузки!");
+        }
+
+        private JsonResult JsonErrorLog(string msg)
         {
             Logger.Error(msg);
             return Json(new JsonError(msg));

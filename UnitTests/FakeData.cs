@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using DrinksVendingMachine.Models.BL;
+using DrinksVendingMachine.Models.Core;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
 

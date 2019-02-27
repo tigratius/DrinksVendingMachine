@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using DrinksVendingMachine.Models.BL;
 using DrinksVendingMachine.Models.Classes;
+using DrinksVendingMachine.Models.Classes.Utils;
+using DrinksVendingMachine.Models.Core;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
 using NLog;

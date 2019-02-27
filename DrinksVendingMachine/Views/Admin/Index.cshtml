@@ -6,130 +6,147 @@
 }
 
 <script type="text/javascript" src="~/Scripts/js/admin.js"></script>
+<script type="text/javascript" src="~/Scripts/footable/js/footable.js"></script>
 
-<h1>Настройки автомата</h1>
+<h1>Панель администратора</h1>
 
-<h2>Монеты</h2>
-
-<table>
-    <thead>
-        <tr>
-            <td>
-                <p>Номинал</p>
-            </td>
-            <td>
-                <p>Количество</p>
-            </td>
-            <td>
-                <p>Блокировка</p>
-            </td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Coins)
-        {
-            <tr>
-                <td>
-                    <p>
-                        @((int)item.Value)
-                    </p>
-                </td>
-                <td>
-                    <p>
-                        <input id="@item.Id" type="number" value="@item.Count" onchange="adminManager.changeCoinCount('@item.Id')" />
-                    </p>
-                </td>
-                <td>
-                    <p>
-                        <input id="bl_@item.Id" type="checkbox" checked="@item.IsBlocking" onchange="adminManager.changeBlocking('@item.Id')" />
-                    </p>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<h2>Напитки</h2>
-
-
-@using (Html.BeginForm("Import", "Admin", new { token = @Model.Token }, FormMethod.Post, new { enctype = "multipart/form-data" }))
-{
-    <p>Импорт напитков</p>
-    <div class="form-group">
-        <input type="file" id="importDataFile" name="upload" style="display: inline-block"/>
-        <input type="submit" value="Импортировать" @*class="btn btn-default"*@ />
-    </div>
-}
-
-<div>
-    <p>Добавление нового напитка </p>
-    <div>
-        <input type="file" id="uploadImageFile" accept="image/*" style="display: inline-block"/>
-        <input type="text" id="name" placeholder="Название напитка">
-        <input id="cost" type="number" placeholder="Цена">
-        <input type="number" id="count" placeholder="Количество">
-        <input type="button" class="add-row" value="Добавить" onclick="adminManager.addDrink()">
+<div class="row row-margin">
+    <h3>Монеты</h3>
+    <div class="row row-margin">
+        <table class="tbl">
+            <thead>
+                <tr>
+                    <th>
+                        Номинал
+                    </th>
+                    <th data-breakpoints="mobile">
+                        Количество
+                    </th>
+                    <th data-breakpoints="mobile">
+                        Блокировка
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Coins)
+            {
+                    <tr>
+                        <td>
+                            @((int)item.Value) р.
+                        </td>
+                        <td>
+                            <input id="@item.Id" type="number" value="@item.Count" class="input-sm" onchange="adminManager.changeCoinCount('@item.Id')" />
+                        </td>
+                        <td>
+                            <input id="bl_@item.Id" type="checkbox" class="checkbox" checked="@item.IsBlocking" onchange="adminManager.changeBlocking('@item.Id')" />
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
-<br />
-
-<table id="drink-table">
-    <thead>
-        <tr>
-            <td>
-                <p></p>
-            </td>
-            <td>
-                <p>Название</p>
-            </td>
-            <td>
-                <p>Стоимость</p>
-            </td>
-            <td>
-                <p>Количество</p>
-            </td>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Drinks)
-        {
-            <tr id="row_@item.Id">
-                <td>
-                    <p>
-                        <img id="img_@item.Id" src="@item.ImagePath" class="img img-hover" onclick="imageClick('@item.Id')" />
-                    </p>
-                </td>
-                <td>
-                    <p>
-                        <input id="dn_@item.Id" type="text" value="@item.Name" onchange="adminManager.changeDrinkName('@item.Id')" />
-                    </p>
-                </td>
-                <td>
-                    <p>
-                        <input id="dcst_@item.Id" type="number" value="@item.CostPrice" onchange="adminManager.changeDrinkCost('@item.Id')" />
-                    </p>
-                </td>
-                <td>
-                    <p>
-                        <input id="dcnt_@item.Id" type="number" value="@item.Count" onchange="adminManager.changeDrinkCount('@item.Id')" />
-                    </p>
-                </td>
-                <td>
-                    <p>
-                        <input type="button" value="Удалить" onclick="adminManager.removeDrink('@item.Id')" />
-                    </p>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<div>
-    <input type="hidden" id="hiddenImg" /><br />
-    <input type="file" name="upload" id="uploadFile" style="display: none;" accept="image/*" onchange="adminManager.changeImage()" /><br />
+<div class="row row-margin">
+    <h3>Напитки</h3>
+    <div class="row row-margin">
+        <div class="row">
+            <h5>Добавление нового напитка </h5>
+            <div class="row row-margin">
+                <label id="AddLbl" class="file_upload">
+                    <span class="button">Выбрать</span>
+                    <mark>Файл не выбран</mark>
+                    <input type="file" id="UploadImageFile" accept="image/*" onchange="inputChange('#AddLbl')" />
+                </label>
+                <div style="margin-left: -15px" class="col-lg-7 col-md-1 col-sm-1 col-xs-1">
+                    <input id="Name" type="text" class="input-sm" placeholder="Название напитка">
+                    <input id="Cost" type="number" class="input-sm" placeholder="Цена">
+                    <input id="Count" type="number" class="input-sm" placeholder="Количество">
+                    <input type="button" class="btn btn-default" value="Добавить" onclick="adminManager.addDrink()">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <h5>Импорт напитков</h5>
+            <div class="row row-margin">
+                <label class="file_upload" id="ImportLbl">
+                    <span class="button">Выбрать</span>
+                    <mark>Файл не выбран</mark>
+                    <input type="file" id="ImportDataFile" name="upload" accept=".csv" onchange="inputChangeImport()" />
+                </label>
+                <input id="ImportSubmit" type="button" class="btn btn-default" value="Импортировать" disabled="disabled" onclick="adminManager.importDrinks()" />
+                <span id="ShowLoadMsg" style="display: none">Загружаю данные...</span>
+            </div>
+        </div>
+        <div class="row">
+            <h5>В наличии</h5>
+            <div class="row row-margin">
+                <table id="DrinkTable" class="tbl">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th data-breakpoints="mobile">
+                                Название
+                            </th>
+                            <th data-breakpoints="mobile tablet">
+                                Стоимость, р.
+                            </th>
+                            <th data-breakpoints="mobile tablet">
+                                Количество
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Drinks)
+                        {
+                            <tr id="row_@item.Id">
+                                <td>
+                                    <img id="img_@item.Id" src="@item.ImagePath" class="img img-hover img-thumbnail" onclick="imageClick('@item.Id')" alt="" />
+                                </td>
+                                <td>
+                                    <input id="dn_@item.Id" type="text" value="@item.Name" class="input-sm" onchange="adminManager.changeDrinkName('@item.Id')" />
+                                </td>
+                                <td>
+                                    <input id="dcst_@item.Id" type="number" class="input-sm" value="@item.CostPrice" onchange="adminManager.changeDrinkCost('@item.Id')" />
+                                </td>
+                                <td>
+                                    <input id="dcnt_@item.Id" type="number" class="input-sm" value="@item.Count" onchange="adminManager.changeDrinkCount('@item.Id')" />
+                                </td>
+                                <td>
+                                    <input type="button" value="Удалить" class="btn btn-default" onclick="adminManager.removeDrink('@item.Id')" />
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div>
+                    <input type="hidden" id="HiddenImg" /><br />
+                    <input type="file" name="upload" id="UploadFile" style="display: none;" accept="image/*" onchange="adminManager.changeImage()" /><br />
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
-    var adminManager = new AdminManager('@Model.Token');
+    var adminManager = null;
+
+    $(document).ready(function () {
+        adminManager = new AdminManager();
+        adminManager.init('@Model.Token');
+    });
+
+    $(function () {
+        jQuery('.tbl').footable({
+            calculateWidthOverride: function () {
+                return { width: jQuery(window).width() };
+            },
+            breakpoints: {
+                mobile: 0,
+                tablet: 750,
+                desktop: 1024
+            }
+        });
+    });
 </script>

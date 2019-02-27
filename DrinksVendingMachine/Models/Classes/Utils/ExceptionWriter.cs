@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Web;
+using DrinksVendingMachine.Models.Classes.Loggers;
+using DrinksVendingMachine.Models.Interfaces;
 using NLog;
 
-namespace DrinksVendingMachine.Models.Classes
+namespace DrinksVendingMachine.Models.Classes.Utils
 {
     public static class ExceptionWriter
     {

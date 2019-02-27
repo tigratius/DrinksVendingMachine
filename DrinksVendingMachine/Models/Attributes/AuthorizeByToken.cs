@@ -2,6 +2,7 @@
 using System.Web;
 using System.Web.Mvc;
 using DrinksVendingMachine.Models.Classes;
+using DrinksVendingMachine.Models.Classes.Utils;
 
 namespace DrinksVendingMachine.Models.Attributes
 {

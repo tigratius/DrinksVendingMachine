@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DrinksVendingMachine.Models.BL;
 using DrinksVendingMachine.Models.Classes;
+using DrinksVendingMachine.Models.Core;
 using DrinksVendingMachine.Models.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

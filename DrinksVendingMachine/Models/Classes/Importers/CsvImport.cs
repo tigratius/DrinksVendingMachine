@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using DrinksVendingMachine.Models.Classes;
 using DrinksVendingMachine.Models.Interfaces;
 
-namespace DrinksVendingMachine.Models.BL.Importers
+namespace DrinksVendingMachine.Models.Classes.Importers
 {
     public class CsvImport : IStrategy
     {
+        private const string ExtensionsAllowed = "csv";
+
         public List<Drink> Import(Stream stream)
         {
             var drinks = new List<Drink>();
@@ -24,8 +25,8 @@ namespace DrinksVendingMachine.Models.BL.Importers
                         drinks.Add(new Drink()
                         {
                             Name = cell[0],
-                            Cost = Int32.Parse(cell[1]),
-                            Count = Int32.Parse(cell[2]),
+                            Cost = int.Parse(cell[1]),
+                            Count = int.Parse(cell[2]),
                             ImgPath = cell[3]
                         });
                     }
@@ -34,7 +35,10 @@ namespace DrinksVendingMachine.Models.BL.Importers
 
             return drinks;
         }
-    }
 
-    
+        public bool IsAllowedExtension(string extension)
+        {
+            return extension.Contains(ExtensionsAllowed) ;
+        }
+    }
 }

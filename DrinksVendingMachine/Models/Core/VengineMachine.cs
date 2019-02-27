@@ -5,7 +5,7 @@ using DrinksVendingMachine.Models.Classes;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
 
-namespace DrinksVendingMachine.Models.BL
+namespace DrinksVendingMachine.Models.Core
 {
     public class VengineMachine
     {

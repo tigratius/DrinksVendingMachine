@@ -1,57 +1,38 @@
 ﻿function UserManager() {
 
-    var that = this;
+    var _this = this;
 
-    this.imageClick = function (id, cost, count) {
-
-        var totalSum = parseInt($('#totalSum').text());
-        var c = parseInt(cost);
-        var cnt = parseInt(count);
-
-        /*if (totalSum < c || cnt < 1) {
-            return;
-        }*/
-
-        if (!validateConditionToBuy(c, cnt, totalSum)) {
-            return;
+    this.init =function(deposit, change) {
+        $("#TotalSum").text(deposit);
+        $("#Change").text(change);
+        if (change > 0 && deposit === 0) {
+            $("#ButtonTakeMoney").removeProp("disabled");
         }
-
-        var image = $(`#img_${id}`);
-
-        if (!image.hasClass('img-hover')) {
-            return;
-        } else {
-            image.addClass('img-choosen');
-            $("#drinkInfo img").removeClass('img-hover');
-            $("#button-buy").removeProp('disabled');
-            $("#button-cancel").removeProp('disabled');
-            $("#drink-id").val(id);
-        };
     }
 
     this.cancel = function () {
-        $("#drinkInfo img").removeClass('img-choosen');
-        $("#drinkInfo img").addClass('img-hover');
-        $("#button-buy").prop('disabled', true);
-        $("#button-cancel").prop('disabled', true);
-        $("#drink-id").val("");
+        $("#DrinkInfo img").removeClass("img-choosen");
+        $("#DrinkInfo img").addClass("img-hover");
+        $("#ButtonBuy").prop("disabled", true);
+        $("#ButtonCancel").prop("disabled", true);
+        $("#DrinkId").val("");
     }
 
     this.buy = function () {
-        var url = '/User/BuyDrink';
-        var id = $("#drink-id").val();
-        var data = { id: id };
+        const url = "/User/BuyDrink";
+        const id = $("#DrinkId").val();
+        const data = { id: id };
         $.ajax({
             type: "POST",
             url: url,
             data: data,
             success: function (response) {
                 if (response != null) {
-                    that.cancel();
-                    $("#totalSum").text(0);
-                    $("#change").text(response.change);
+                    _this.cancel();
+                    $("#TotalSum").text(0);
+                    $("#Change").text(response.change);
                     if (response.change > 0) {
-                        $("#button-take-money").removeProp('disabled');
+                        $("#ButtonTakeMoney").removeProp("disabled");
                     }
 
                     if (!response.success) {
@@ -64,34 +45,57 @@
     }
 
     this.takeMoney = function () {
-        var url = '/User/GetChange';
+        const url = "/User/GetChange";
         $.ajax({
             type: "GET",
             url: url,
             success: function () {
-                $("#button-take-money").prop('disabled', true);
-                $("#change").text(0);
+                $("#ButtonTakeMoney").prop("disabled", true);
+                $("#Change").text(0);
             },
             error: processErrorStd
         });
     }
 
     this.addCoin = function (id) {
-        var url = '/User/AddCoin';
-        var data = { id: id };
+        const url = "/User/AddCoin";
+        const data = { id: id };
         $.ajax({
             type: "POST",
             url: url,
             data: data,
             success: function (response) {
                 if (response != null) {
-                    $("#totalSum").text(response.deposit);
-                    $("#button-take-money").prop('disabled', true);
+                    $("#TotalSum").text(response.deposit);
+                    $("#ButtonTakeMoney").prop("disabled", true);
                 }
             },
             error: processErrorStd
         });
     };
+
+    this.imageClick = function (id, cost, count) {
+
+        const totalSum = parseInt($("#TotalSum").text());
+        const c = parseInt(cost);
+        const cnt = parseInt(count);
+
+        if (!validateConditionToBuy(c, cnt, totalSum)) {
+            return;
+        }
+
+        const image = $(`#img_${id}`);
+
+        if (!image.hasClass("img-hover")) {
+            return;
+        } else {
+            image.addClass("img-choosen");
+            $("#DrinkInfo img").removeClass("img-hover");
+            $("#ButtonBuy").removeProp("disabled");
+            $("#ButtonCancel").removeProp("disabled");
+            $("#DrinkId").val(id);
+        };
+    }
 
     function validateConditionToBuy(cost, count, totalSum) {
         return totalSum >= cost && count > 0;
@@ -101,8 +105,8 @@
         console.log("AJAX request error!");
         console.log("  xhr:");
         console.log(xhr);
-        console.log("  status=" + status);
-        console.log("  error=" + error);
+        console.log(`  status=${status}`);
+        console.log(`  error=${error}`);
         alert(error);
     };
 }

@@ -3,24 +3,25 @@
     padding-bottom: 20px;
 }
 
-/* Set padding to keep content from hitting the edges */
+input[type=file]::-webkit-file-upload-button {
+    cursor: pointer;
+}
+
+input,
+select,
+textarea {
+    max-width: 280px;
+}
+
+/*Classes*/
+
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
 }
 
-/* Override the default bootstrap behavior where horizontal description lists 
-   will truncate terms that are too long to fit in the left column 
-*/
 .dl-horizontal dt {
     white-space: normal;
-}
-
-/* Set width on the form input elements since they're 100% wide by default */
-input,
-select,
-textarea {
-    max-width: 280px;
 }
 
 .img {
@@ -43,6 +44,137 @@ textarea {
     border: 5px solid #900;
 }
 
-input[type=file]::-webkit-file-upload-button {
-    cursor: pointer;
+.info-span {
+    font-weight: bold;
+    font-size: 12pt;
 }
+
+.coin-button {
+    width: 65px;
+}
+
+.lightcoral-bg {
+    background: lightcoral;
+}
+
+.costprice {
+    margin-left: 40px;
+}
+
+.row-margin {
+    margin-left: 15px;
+    margin-top: 20px;
+}
+
+.drink-info {
+    display: inline-block;
+}
+
+.tbl {
+}
+
+.tbl thead > tr > th,
+.tbl tbody > tr > th,
+.tbl tfoot > tr > th,
+.tbl thead > tr > td,
+.tbl tbody > tr > td,
+.tbl tfoot > tr > td {
+    padding: 8px;
+    line-height: 1.428571429;
+    vertical-align: top;
+    border-top: 1px solid #dddddd;
+}
+
+.tbl thead > tr > th {
+    vertical-align: bottom;
+    border-bottom: 2px solid #dddddd;
+}
+
+body{
+    font: 14px/1 "Helvetica Neue", "Helvetica", Helvetica,Arial, sans-serif; 
+}
+
+.file_upload{
+    display: block;
+    position: relative;
+    overflow: hidden;
+    font-size: 1em;              
+    height: 2em;
+    width: 52%;      
+    line-height: 2em             
+}
+.file_upload .button, .file_upload > mark{
+    display: block;
+    cursor: pointer              
+}
+.file_upload .button{
+    float: right;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    width: 8em;                  
+    height: 100%;
+    text-align: center           
+}
+.file_upload > mark{
+    background: transparent;     
+    padding-left: 1em            
+}
+@media only screen and ( max-width: 500px ){  
+    .file_upload > mark{
+        display: none
+    }
+    .file_upload .button{
+        width: 100%
+    }
+}
+.file_upload input[type=file]{
+    position: absolute;
+    top: 0;
+    opacity: 0
+}
+
+.file_upload{
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    transition: box-shadow 0.1s linear
+}
+.file_upload.focus{
+    box-shadow: 0 0 5px rgba(0,30,255,0.4)
+}
+.file_upload .button{
+    color: #333333;
+    background-color: #ffffff;
+    border-color: #cccccc;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 4px;
+    padding: 3px 6px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.428571429;
+    text-align: center;
+    white-space: nowrap;
+/*    background: #7300df;
+    transition: background 0.2s;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-color: rgba(0,0,0,0.1) rgba(0,0,0,0.1) rgba(0,0,0,0.25);
+    border-radius: 2px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+    color: #fff;
+    text-shadow: #6200bd 0 -1px 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis*/
+}
+.file_upload:hover .button{
+    /*background: #6200bd;*/
+    color: #333333;
+    background-color: #ebebeb;
+    border-color: #adadad;
+    /*text-shadow: #5d00b3 0 -1px 0*/
+}
+/*.file_upload:active .button{
+    background: #5d00b3;
+    box-shadow: 0 0 3px rgba(0,0,0,0.3) inset
+}*/

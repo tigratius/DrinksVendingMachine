@@ -3,16 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace DrinksVendingMachine.Models.Classes
+namespace DrinksVendingMachine.Models.Classes.json
 {
-
-    public abstract class JsonBase
-    {
-        public bool success;
-        public string title;
-        public string message;
-    }
-
     public class JsonError : JsonBase
     {
         public JsonError(string title, string message)
@@ -30,22 +22,6 @@ namespace DrinksVendingMachine.Models.Classes
         public JsonError(Exception exception)
             : this(exception.Message)
         {
-        }
-    }
-
-    public class JsonSuccess : JsonBase
-    {
-        public JsonSuccess()
-        {
-            success = true;
-            title = "Успешная операция";
-            message = "ok";
-        }
-
-        public JsonSuccess(string message)
-            : this()
-        {
-            this.message = message;
         }
     }
 }
