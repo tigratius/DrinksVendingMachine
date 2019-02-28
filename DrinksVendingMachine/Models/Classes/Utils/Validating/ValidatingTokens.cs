@@ -1,4 +1,4 @@
-﻿namespace DrinksVendingMachine.Models.Classes.Utils
+﻿namespace DrinksVendingMachine.Models.Classes.Utils.Validating
 {
     public static class ValidatingTokens
     {

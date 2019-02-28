@@ -35,6 +35,10 @@ textarea {
 
 }
 
+.img-empty {
+    opacity:0.5;
+}
+
 .img-hover:hover {
     cursor: pointer;
     border: 5px solid #900;

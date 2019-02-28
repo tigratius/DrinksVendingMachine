@@ -1,6 +1,8 @@
 .vs/*
 TestResults/*
 
+readme.txt
+
 #Visual Studio files
 *.[Oo]bj
 *.exe

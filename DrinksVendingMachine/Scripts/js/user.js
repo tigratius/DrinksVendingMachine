@@ -12,7 +12,8 @@
 
     this.cancel = function () {
         $("#DrinkInfo img").removeClass("img-choosen");
-        $("#DrinkInfo img").addClass("img-hover");
+        $("#DrinkInfo img").not(".img-empty").addClass("img-hover");
+
         $("#ButtonBuy").prop("disabled", true);
         $("#ButtonCancel").prop("disabled", true);
         $("#DrinkId").val("");
@@ -28,16 +29,18 @@
             data: data,
             success: function (response) {
                 if (response != null) {
-                    _this.cancel();
                     $("#TotalSum").text(0);
                     $("#Change").text(response.change);
                     if (response.change > 0) {
                         $("#ButtonTakeMoney").removeProp("disabled");
                     }
-
+                    if (response.count < 1) {
+                        $(`#img_${response.id}`).addClass("img-empty");
+                    }
                     if (!response.success) {
                         alert(response.msg);
                     }
+                    _this.cancel();
                 }
             },
             error: processErrorStd
@@ -74,31 +77,37 @@
         });
     };
 
-    this.imageClick = function (id, cost, count) {
+    this.IsCanBuy = function (id) {
 
-        const totalSum = parseInt($("#TotalSum").text());
-        const c = parseInt(cost);
-        const cnt = parseInt(count);
-
-        if (!validateConditionToBuy(c, cnt, totalSum)) {
+        if ($(`#img_${id}`).hasClass("img-empty"))
             return;
-        }
 
-        const image = $(`#img_${id}`);
-
-        if (!image.hasClass("img-hover")) {
-            return;
-        } else {
-            image.addClass("img-choosen");
-            $("#DrinkInfo img").removeClass("img-hover");
-            $("#ButtonBuy").removeProp("disabled");
-            $("#ButtonCancel").removeProp("disabled");
-            $("#DrinkId").val(id);
-        };
-    }
-
-    function validateConditionToBuy(cost, count, totalSum) {
-        return totalSum >= cost && count > 0;
+        const url = "/User/IsCanBuy";
+        const data = { id: id };
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            success: function (response) {
+                if (response != null) {
+                    if (response.success) {
+                        const image = $(`#img_${id}`);
+                        if (!image.hasClass("img-hover")) {
+                            return;
+                        } else {
+                            image.addClass("img-choosen");
+                            $("#DrinkInfo img").removeClass("img-hover");
+                            $("#ButtonBuy").removeProp("disabled");
+                            $("#ButtonCancel").removeProp("disabled");
+                            $("#DrinkId").val(id);
+                        };
+                    } else {
+                        alert(response.message);
+                    }
+                }
+            },
+            error: processErrorStd
+        });
     }
 
     function processErrorStd (xhr, status, error) {

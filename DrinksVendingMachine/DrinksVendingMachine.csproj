@@ -133,6 +133,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\Images\cola.jpg" />
+    <Content Include="Content\Images\default\def.jpg" />
     <Content Include="Content\Images\pepsi.png" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -159,11 +160,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Models\Attributes\AuthorizeByToken.cs" />
     <Compile Include="Models\Classes\Importers\CsvImport.cs" />
-    <Compile Include="Models\Classes\Managers\FileManager.cs" />
+    <Compile Include="Models\Classes\Importers\FileContext.cs" />
+    <Compile Include="Models\Classes\Utils\Info.cs" />
+    <Compile Include="Models\Classes\Utils\Validating\Validate.cs" />
     <Compile Include="Models\Core\VengineMachine.cs" />
     <Compile Include="Models\Classes\json\JsonSuccess.cs" />
     <Compile Include="Models\Classes\json\JsonError.cs" />
-    <Compile Include="Models\Classes\Utils\ValidatingTokens.cs" />
+    <Compile Include="Models\Classes\Utils\Validating\ValidatingTokens.cs" />
     <Compile Include="Models\Classes\json\JsonBase.cs" />
     <Compile Include="Models\Classes\Loggers\SimpleLoggers.cs" />
     <Compile Include="Models\Classes\Utils\ExceptionWriter.cs" />

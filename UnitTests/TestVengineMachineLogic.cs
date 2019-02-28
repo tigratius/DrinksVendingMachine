@@ -5,9 +5,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests
 {
+    /// <summary>
+    /// Тестируем логику автомата
+    /// </summary>
     [TestClass]
     public class TestVengineMachineLogic : FakeData
     {
+
+        /// <summary>
+        /// Добавляем новы напиток
+        /// </summary>
         [TestMethod]
         public void DrinkAdd()
         {
@@ -28,6 +35,9 @@ namespace UnitTests
             Assert.AreEqual(3, DrinkEntitiesList.Count);
         }
 
+        /// <summary>
+        /// Удаляем напиток
+        /// </summary>
         [TestMethod]
         public void DrinkRemove()
         {
@@ -40,6 +50,9 @@ namespace UnitTests
             Assert.AreEqual(1, DrinkEntitiesList.Count);
         }
 
+        /// <summary>
+        /// изменение кол-ва напитков
+        /// </summary>
         [TestMethod]
         public void DrinkChangeCount()
         {
@@ -49,6 +62,9 @@ namespace UnitTests
             Assert.AreEqual(8, Drink1.Count);
         }
 
+        /// <summary>
+        /// изменение стоимости напитка
+        /// </summary>
         [TestMethod]
         public void DrinkChangeCost()
         {
@@ -60,6 +76,10 @@ namespace UnitTests
             Assert.AreEqual(50, drink1.CostPrice);
         }
 
+
+        /// <summary>
+        /// смена картинки
+        /// </summary>
         [TestMethod]
         public void DrinkChangeImage()
         {
@@ -69,6 +89,10 @@ namespace UnitTests
             Assert.AreEqual("filename1", Drink1.ImagePath);
         }
 
+
+        /// <summary>
+        /// Покупка напитка
+        /// </summary>
         [TestMethod]
         public void BuyDrink()
         {
@@ -80,6 +104,9 @@ namespace UnitTests
             Assert.AreEqual(5, CurrentState.Change);
         }
 
+        /// <summary>
+        /// нет сдачи
+        /// </summary>
         [TestMethod]
         public void BuyDrinkNoChange()
         {
@@ -93,6 +120,7 @@ namespace UnitTests
             Assert.AreEqual(15, CurrentState.Change);
         }
 
+        //Имитация покупки нескольких напитков перед получение сдачи
         [TestMethod]
         public void BuySomeDrinksBeforeGetChange()
         {
@@ -128,7 +156,10 @@ namespace UnitTests
             Assert.AreEqual(4, Drink2.Count);
 
         }
-
+        
+        /// <summary>
+        /// Сдача
+        /// </summary>
         [TestMethod]
         public void GetChange()
         {
@@ -139,6 +170,10 @@ namespace UnitTests
             Assert.AreEqual(8, Coin2.Count);
         }
 
+
+        /// <summary>
+        /// Изменение кол-ва монет
+        /// </summary>
         [TestMethod]
         public void ChangeCoinCount()
         {
@@ -149,6 +184,9 @@ namespace UnitTests
             Assert.AreEqual(20, Coin1.Count);
         }
 
+        /// <summary>
+        /// Добавление монет
+        /// </summary>
         [TestMethod]
         public void AddThreeCoin()
         {
@@ -163,6 +201,9 @@ namespace UnitTests
             Assert.AreEqual(4, CurrentState.Deposit);
         }
 
+        /// <summary>
+        /// Блокировка монет
+        /// </summary>
         [TestMethod]
         public void BlockUnblock()
         {
@@ -173,6 +214,49 @@ namespace UnitTests
 
             Assert.IsTrue(Coin1.IsBlocking);
             Assert.IsFalse(Coin2.IsBlocking);
+        }
+
+        /// <summary>
+        /// Не можем купить если внесенные средства меньше стоимости напитка
+        /// </summary>
+        [TestMethod]
+        public void CantBuyIfDepositLowerThanCost()
+        {
+            Init();
+
+            Drink1.CostPrice = 10;
+            Drink1.Count = 1;
+
+            Coin2.Count = 10;
+            Coin2.Value = ValueCoins.Two;
+
+            VengineMachine.AddCoin(Coin2, CurrentState);
+            Assert.IsFalse(VengineMachine.IsCanBuy(Drink1, CurrentState));
+
+            Coin1.Count = 10;
+            Coin1.Value = ValueCoins.Ten; 
+
+            VengineMachine.AddCoin(Coin1, CurrentState);
+            Assert.IsTrue(VengineMachine.IsCanBuy(Drink1, CurrentState));
+
+         
+        }
+        /// <summary>
+        /// Не можем купить когда кол-во напитков равно 0
+        /// </summary>
+        [TestMethod]
+        public void CantBuyIfCountEqualsZero()
+        {
+            Init();
+
+            Drink1.CostPrice = 10;
+            Drink1.Count = 0;
+
+            Coin1.Count = 10;
+            Coin1.Value = ValueCoins.Ten;
+
+            VengineMachine.AddCoin(Coin1, CurrentState);
+            Assert.IsFalse(VengineMachine.IsCanBuy(Drink1, CurrentState));
         }
     }
 }

@@ -7,8 +7,9 @@ using DrinksVendingMachine.Models.Attributes;
 using DrinksVendingMachine.Models.Classes;
 using DrinksVendingMachine.Models.Classes.Importers;
 using DrinksVendingMachine.Models.Classes.json;
-using DrinksVendingMachine.Models.Classes.Managers;
+using DrinksVendingMachine.Models.Classes.Loggers;
 using DrinksVendingMachine.Models.Classes.Utils;
+using DrinksVendingMachine.Models.Classes.Utils.Validating;
 using DrinksVendingMachine.Models.Core;
 using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
@@ -22,7 +23,7 @@ namespace DrinksVendingMachine.Controllers
     {
         private readonly VengingMachineDbContext _db = new VengingMachineDbContext();
 
-        private readonly FileManager _fileManager;
+        private readonly FileContext _fileContext;
         private readonly VengineMachine _vengineMachine;
 
         private readonly IStrategy _strategy = new CsvImport();
@@ -33,12 +34,13 @@ namespace DrinksVendingMachine.Controllers
         public AdminController()
         {
             _vengineMachine = new VengineMachine(new DbSetRepository<DrinkEntity>(_db.DrinkEntities), new DbSetRepository<CoinEntity>(_db.CoinsEntities));
-            _fileManager = new FileManager(_strategy);
+            _fileContext = new FileContext(_strategy);
         }
 
         // GET: Admin
         public ActionResult Index()
         {
+            Logger.Info("");
             Logger.Info(" Index() called...");
 
             ModelView model =
@@ -55,18 +57,19 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult AddDrink(string name, int cost, int count, string imgPath)
         {
+            Logger.Info("");
             Logger.Info(" AddDrink() called...");
             Logger.Info("   name = " + name);
             Logger.Info("   cost = " + cost);
             Logger.Info("   count = " + count);
             Logger.Info("   img = " + imgPath);
 
-            if (!ValidateCost(cost))
+            if (!Validate.ValidateCost(cost))
             {
                 return JsonErrorCost();
             }
 
-            if (!ValidateCount(count))
+            if (!Validate.ValidateCount(count))
             {
                 return JsonErrorCount();
             }
@@ -92,6 +95,7 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult RemoveDrink(Guid id)
         {
+            Logger.Info("");
             Logger.Info(" RemoveDrink() called...");
             Logger.Info("   id = " + id);
 
@@ -108,11 +112,13 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public void ChangeDrinkName(Guid id, string name)
         {
+            Logger.Info("");
             Logger.Info(" ChangeDrinkName() called...");
             Logger.Info("   id = " + id);
             Logger.Info("   name = " + name);
 
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
+            Info.DrinkInfo(drinkEntity, new NLogInfoWrapper(Logger));
 
             _vengineMachine.ChangeName(drinkEntity, name);
 
@@ -123,16 +129,18 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult ChangeDrinkCount(Guid id, int count)
         {
+            Logger.Info("");
             Logger.Info(" ChangeDrinkName() called...");
             Logger.Info("   id = " + id);
             Logger.Info("   count = " + count);
 
-            if (!ValidateCount(count))
+            if (!Validate.ValidateCount(count))
             {
                 return JsonErrorCount();
             }
 
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
+            Info.DrinkInfo(drinkEntity, new NLogInfoWrapper(Logger));
 
             _vengineMachine.ChangeCount(drinkEntity, count);
 
@@ -145,16 +153,18 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult ChangeDrinkCost(Guid id, int cost)
         {
+            Logger.Info("");
             Logger.Info(" ChangeDrinkName() called...");
             Logger.Info("   id = " + id);
             Logger.Info("   cost = " + cost);
 
-            if (!ValidateCount(cost))
+            if (!Validate.ValidateCost(cost))
             {
                 return JsonErrorCost();
             }
 
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
+            Info.DrinkInfo(drinkEntity, new NLogInfoWrapper(Logger));
 
             _vengineMachine.ChangeCost(drinkEntity, cost);
 
@@ -167,11 +177,13 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult ChangeDrinkImage(Guid id, string path)
         {
+            Logger.Info("");
             Logger.Info(" ChangeDrinkImage() called...");
             Logger.Info("   id = " + id);
             Logger.Info("   path = " + path);
 
             DrinkEntity drinkEntity = _db.DrinkEntities.First(d => d.Id == id);
+            Info.DrinkInfo(drinkEntity, new NLogInfoWrapper(Logger));
 
             _vengineMachine.ChangeImage(drinkEntity, path);
 
@@ -184,16 +196,18 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult ChangeCoinCount(Guid id, int count)
         {
+            Logger.Info("");
             Logger.Info(" ChangeCoinCount() called...");
             Logger.Info("   id = " + id);
             Logger.Info("   count = " + count);
 
-            if (!ValidateCount(count))
+            if (!Validate.ValidateCount(count))
             {
                 return JsonErrorCount();
             }
 
             CoinEntity coinEntity = _db.CoinsEntities.First(c => c.Id == id);
+            Info.CoinInfo(coinEntity, new NLogInfoWrapper(Logger));
 
             _vengineMachine.ChangeCoinCount(coinEntity, count);
 
@@ -206,11 +220,13 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public void ChangeBlocking(Guid id, bool isBlocking)
         {
+            Logger.Info("");
             Logger.Info(" ChangeBlocking() called...");
             Logger.Info("   id = " + id);
             Logger.Info("   isBlocking = " + isBlocking);
 
             CoinEntity coinEntity = _db.CoinsEntities.First(c => c.Id == id);
+            Info.CoinInfo(coinEntity, new NLogInfoWrapper(Logger));
 
             if (isBlocking)
             {
@@ -228,20 +244,21 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult Upload()
         {
+            Logger.Info("");
             Logger.Info(" Upload() called...");
 
             var upload = Request.Files[0];
             string path;
             if (upload != null)
             {
-                if (IsImage(upload))
+                if (Validate.IsImage(upload))
                 {
                     path = SaveFile(upload);
-                    Logger.Info("path = " + path);
+                    Logger.Info(" path = " + path);
                 }
                 else
                 {
-                    return JsonErrorLog("Загружаемый файл " + upload.FileName + " не является картинкой!");
+                    return JsonErrorLog(" Загружаемый файл " + upload.FileName + " не является картинкой!");
                 }
             }
             else
@@ -255,6 +272,7 @@ namespace DrinksVendingMachine.Controllers
         [HttpPost]
         public JsonResult Import()
         {
+            Logger.Info("");
             Logger.Info(" Import() called...");
 
             var upload = Request.Files[0];
@@ -265,17 +283,17 @@ namespace DrinksVendingMachine.Controllers
 
                 var ext = System.IO.Path.GetExtension(upload.FileName);
 
-                if (_fileManager.IsAllowedExtension(ext))
+                if (_fileContext.IsAllowedExtension(ext))
                 {
                     Logger.Info(" import started...");
                     List<Drink> drinks = null;
                     try
                     {
-                        drinks = _fileManager.Import(upload.InputStream);
+                        drinks = _fileContext.Import(upload.InputStream);
                     }
                     catch (Exception e)
                     {
-                        Logger.Error("Неправильная структура файла!");
+                        Logger.Error(" Неправильная структура файла!");
                         ExceptionWriter.WriteErrorDetailed(Logger, e);
                     }
 
@@ -285,8 +303,19 @@ namespace DrinksVendingMachine.Controllers
                     {
                         foreach (var drink in drinks)
                         {
-                            //Сохраняем файл в хранилище
-                            var path = SaveFile(drink.ImgPath);
+                            
+                            //Если по каким-то причинам при импорте не нашлась картинка по указанному пути берем дефолтную
+                            string path=GetPathDefaultImg();
+                            try
+                            {
+                                //Сохраняем файл в хранилище
+                                path = SaveFile(drink.ImgPath);
+                            }
+                            catch (Exception e)
+                            {
+                                Logger.Error(" Указан неверный путь к файлу!");
+                                ExceptionWriter.WriteErrorDetailed(Logger, e);
+                            }
 
                             DrinkEntity drinkEntity = new DrinkEntity
                             {
@@ -296,6 +325,7 @@ namespace DrinksVendingMachine.Controllers
                                 Count = drink.Count,
                                 CostPrice = drink.Cost
                             };
+                            Info.DrinkInfo(drinkEntity, new NLogInfoWrapper(Logger));
 
                             _vengineMachine.Add(drinkEntity);
                         }
@@ -305,12 +335,12 @@ namespace DrinksVendingMachine.Controllers
                     }
                     else
                     {
-                        return JsonErrorLog("Пустые данные!");
+                        return JsonErrorLog(" Пустые данные!");
                     }
                 }
                 else
                 {
-                    return JsonErrorLog("Файл имеет неверный формат!");
+                    return JsonErrorLog(" Файл имеет неверный формат!");
                 }
             }
             else
@@ -324,8 +354,8 @@ namespace DrinksVendingMachine.Controllers
         #region Utils
         private string SaveFile(HttpPostedFileBase postedFile)
         {
-            Logger.Info("SaveFile() called");
-            Logger.Info("postedFile.FileName = " + postedFile.FileName);
+            Logger.Info(" SaveFile() called");
+            Logger.Info(" postedFile.FileName = " + postedFile.FileName);
             var fileName = System.IO.Path.GetFileName(postedFile.FileName);
             var path = ImageStoragePath + fileName;
             postedFile.SaveAs(Server.MapPath(path));
@@ -334,56 +364,22 @@ namespace DrinksVendingMachine.Controllers
 
         private string SaveFile(string fileSource)
         {
-            Logger.Info("SaveFile() called");
-            Logger.Info("fileSource = " + fileSource);
+            Logger.Info(" SaveFile() called");
+            Logger.Info(" fileSource = " + fileSource);
             var fileName = System.IO.Path.GetFileName(fileSource);
             var path = ImageStoragePath + fileName;
             System.IO.File.Copy(fileSource, Server.MapPath(path), true);
             return path;
         }
 
-        private bool IsImage(HttpPostedFileBase postedFile)
-        {
-            if (!string.Equals(postedFile.ContentType, "image/jpg", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(postedFile.ContentType, "image/jpeg", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(postedFile.ContentType, "image/pjpeg", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(postedFile.ContentType, "image/gif", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(postedFile.ContentType, "image/x-png", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(postedFile.ContentType, "image/png", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            var postedFileExtension = System.IO.Path.GetExtension(postedFile.FileName);
-            if (!string.Equals(postedFileExtension, ".jpg", StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(postedFileExtension, ".png", StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(postedFileExtension, ".gif", StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(postedFileExtension, ".jpeg", StringComparison.OrdinalIgnoreCase))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         protected override void OnException(ExceptionContext filterContext)
         {
             Logger.Error("");
-            Logger.Error("ERROR in " + filterContext.Controller);
+            Logger.Error(" ERROR in " + filterContext.Controller);
             ExceptionWriter.WriteErrorDetailed(Logger, filterContext.Exception);
         }
 
-        public bool ValidateCount(int count)
-        {
-            return count >= 0;
-        }
-
-        public bool ValidateCost(int cost)
-        {
-            return cost > 0;
-        }
-
-        private JsonResult JsonErrorCost()
+       private JsonResult JsonErrorCost()
         {
             return JsonErrorLog(" Ошибка в данных! Стоимость не может быть меньше, либо равна 0");
         }
@@ -394,7 +390,7 @@ namespace DrinksVendingMachine.Controllers
 
         private JsonResult JsonErrorEmptyData()
         {
-            return JsonErrorLog("Нет данных для загрузки!");
+            return JsonErrorLog(" Нет данных для загрузки!");
         }
 
         private JsonResult JsonErrorLog(string msg)
@@ -403,6 +399,10 @@ namespace DrinksVendingMachine.Controllers
             return Json(new JsonError(msg));
         }
 
+        private string GetPathDefaultImg()
+        {
+            return ImageStoragePath + "default/def.jpg";
+        }
         #endregion
     }
 }

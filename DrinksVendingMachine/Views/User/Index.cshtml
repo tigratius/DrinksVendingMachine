@@ -4,17 +4,14 @@
     ViewBag.Title = "Автомат по продаже напитков";
 }
 <style type="text/css">
-    
+
 </style>
 
 <script type="text/javascript" src="~/Scripts/js/user.js"></script>
 
-
-
-
 <h1>Автомат по продаже напитков</h1>
 <div class="row">
-    
+
     <div class="col-lg-4 col-md-5">
 
         <h3>Панель управления</h3>
@@ -53,7 +50,7 @@
     @foreach (var item in Model.Drinks)
     {
         <div id="DrinkInfo" class="drink-info">
-            <img id="img_@item.Id" class="img img-hover img-thumbnail" src="@item.ImagePath" onclick="userManager.imageClick('@item.Id', '@item.CostPrice', @item.Count)" alt="" />
+            <img id="img_@item.Id" class="img img-thumbnail @(item.Count > 0  ? "img-hover" : "img-empty")" src="@item.ImagePath" onclick="userManager.IsCanBuy('@item.Id')" alt="" />
             <p class="costprice">@item.CostPrice р.</p>
         </div>
     }

@@ -5,6 +5,13 @@ using DrinksVendingMachine.Models.Interfaces;
 
 namespace DrinksVendingMachine.Models.Classes.Importers
 {
+    /// <summary>
+    /// Релизация алгоритма простого имопрта csv файла, имеющего след структуру
+    /// Название; Стоимость; Количество; Путь до картинки 
+    /// Пример первых 2 строк
+    /// Mir;5;10;D:\user\downloads\mirinda.jpg 
+    //  Spr;10;10;D:\user\downloads\sprite.jpg
+    /// </summary>
     public class CsvImport : IStrategy
     {
         private const string ExtensionsAllowed = "csv";

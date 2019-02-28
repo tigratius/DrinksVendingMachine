@@ -18,7 +18,7 @@ namespace DrinksVendingMachine
         {
             logger.Info("Application_Start called...");
 
-/*            logger.Info("Database.SetInitializer called...");
+        /*    logger.Info("Database.SetInitializer called...");
             Database.SetInitializer(new VengingMachineDbInitializer());*/
 
             AreaRegistration.RegisterAllAreas();

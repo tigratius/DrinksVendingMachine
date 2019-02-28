@@ -7,6 +7,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests
 {
+
+    /// <summary>
+    /// Тестирование логики подсчета монет
+    /// </summary>
     [TestClass]
     public class TestGetCoinsForChange
     {
@@ -91,7 +95,7 @@ namespace UnitTests
         }
 
         /// <summary>
-        /// Проверка, если сдача меньше монеты достоинстов 10, то ее нет в сдаче
+        /// при сдаче должны отсутствовать монеты 10 и 5, т.к. их нет
         /// </summary>
         [TestMethod]
         public void NoCoinsFiveAndTen()
@@ -202,6 +206,9 @@ namespace UnitTests
         }
     }
 
+    /// <summary>
+    /// Для теста protected метода GetCoins() класса VengineMachine
+    /// </summary>
     public class VengineMachineTest : VengineMachine
     {
         public IList<Coin> GetCoins(List<CoinEntity> coins, int change)
