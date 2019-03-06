@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace DrinksVendingMachine.Models.Classes.json
+﻿namespace DrinksVendingMachine.Models.Classes.json
 {
     public class JsonSuccess : JsonBase
     {

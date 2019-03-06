@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using DrinksVendingMachine.Models.Classes;
-using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Entities;
 
 namespace DrinksVendingMachine.Models.Core
@@ -13,36 +12,6 @@ namespace DrinksVendingMachine.Models.Core
     /// </summary>
     public class VengineMachine
     {
-        private readonly Repository<DrinkEntity> _drinksRepo;
-        private readonly Repository<CoinEntity> _coinsRepo;
-
-        public VengineMachine()
-        {}
-
-        public VengineMachine(Repository<DrinkEntity> drinksRepo, Repository<CoinEntity> coinsRepo)
-        {
-            _drinksRepo = drinksRepo;
-            _coinsRepo = coinsRepo;
-        }
-
-        /// <summary>
-        /// Добавление нового напитка 
-        /// </summary>
-        /// <param name="drinkEntity"></param>
-        public void Add(DrinkEntity drinkEntity)
-        {
-            _drinksRepo.Add(drinkEntity);
-        }
-
-        /// <summary>
-        /// Удаление напитка
-        /// </summary>
-        /// <param name="drinkEntity"></param>
-        public void Remove(DrinkEntity drinkEntity)
-        {
-            _drinksRepo.Remove(drinkEntity);
-        }
-
         /// <summary>
         /// Изменение кол-ва
         /// </summary>
@@ -127,14 +96,15 @@ namespace DrinksVendingMachine.Models.Core
         /// </summary>
         /// <param name="drink"></param>
         /// <param name="currentState"></param>
+        /// <param name="coins"></param>
         /// <returns></returns>
-        public bool BuyDrink(DrinkEntity drink, CurrentStateEntity currentState)
+        public bool BuyDrink(DrinkEntity drink, CurrentStateEntity currentState, IList<CoinEntity> coins)
         {
             //Если не можем купить выходим
             if (!IsCanBuy(drink, currentState))
                 return false;
 
-            List<CoinEntity> coins = _coinsRepo.Queryable().ToList();
+            /*List<CoinEntity> coins = _coinsRepo.Queryable().ToList();*/
             var deposit = currentState.Deposit;
             var change = deposit - drink.CostPrice;
             currentState.Deposit = 0;
@@ -168,9 +138,10 @@ namespace DrinksVendingMachine.Models.Core
         /// Выдача сдачи
         /// </summary>
         /// <param name="currentState"></param>
-        public void GetChange(CurrentStateEntity currentState)
+        /// <param name="coins"></param>
+        public void GetChange(CurrentStateEntity currentState, IList<CoinEntity> coins)
         {
-            List<CoinEntity> coins = _coinsRepo.Queryable().ToList();
+            /*List<CoinEntity> coins = _coinsRepo.Queryable().ToList();*/
             var change = currentState.Change;
 
             //Подсчет монет  для сдачи
@@ -196,7 +167,7 @@ namespace DrinksVendingMachine.Models.Core
         /// <param name="coins"></param>
         /// <param name="change"></param>
         /// <returns></returns>
-        protected IList<Coin> GetCoinsForChange(List<CoinEntity> coins, int change)
+        protected IList<Coin> GetCoinsForChange(IList<CoinEntity> coins, int change)
         {
             List<Coin> matches = new List<Coin>();
             int changeLeft = change;
@@ -238,7 +209,7 @@ namespace DrinksVendingMachine.Models.Core
         /// <param name="coins"></param>
         /// <param name="change"></param>
         /// <returns></returns>
-        protected bool IsHaveCoinsForChange(List<CoinEntity> coins, int change)
+        protected bool IsHaveCoinsForChange(IList<CoinEntity> coins, int change)
         {
             return GetCoinsForChange(coins, change) != null;
         }

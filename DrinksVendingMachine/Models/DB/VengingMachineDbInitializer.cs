@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.Entity;
-using System.IO;
 using DrinksVendingMachine.Models.Entities;
 
 namespace DrinksVendingMachine.Models.DB

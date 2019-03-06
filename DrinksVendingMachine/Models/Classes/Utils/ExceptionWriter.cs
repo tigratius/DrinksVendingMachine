@@ -1,32 +1,25 @@
 ﻿using System;
-using DrinksVendingMachine.Models.Classes.Loggers;
+using DrinksVendingMachine.Models.DB;
 using DrinksVendingMachine.Models.Interfaces;
-using NLog;
 
 namespace DrinksVendingMachine.Models.Classes.Utils
 {
     public static class ExceptionWriter
     {
-        public static void WriteErrorDetailed(Logger nLogger, Exception ex)
+        public static void WriteErrorDetailed(IVendingMachineLogger logger, Exception ex)
         {
-            WriteErrorDetailed(new NLogErrorWrapper(nLogger), ex);
-        }
-
-        public static void WriteErrorDetailed(ISimpleLogger logger, Exception ex)
-        {
-            logger.WriteLine("ERROR (" + ex.GetType().Name + ")");
+            logger.Error("ERROR (" + ex.GetType().Name + ")");
             WriteErrorInternal(logger, ex, 1);
         }
 
-        private static void WriteErrorInternal(ISimpleLogger logger, Exception ex, int depth)
+        private static void WriteErrorInternal(IVendingMachineLogger logger, Exception ex, int depth)
         {
-            logger.WriteLine(ex.Message);
-            logger.WriteLine(ex.StackTrace);
+            logger.Error(ex.Message);
+            logger.Error(ex.StackTrace);
             if (ex.InnerException != null && depth < 10)
             {
-                var indentedLogger = new IndentedLogger(logger, "    ");
-                indentedLogger.WriteLine("InnerException (depth=" + depth + ")");
-                WriteErrorInternal(indentedLogger, ex.InnerException, depth + 1);
+                logger.Error("InnerException (depth=" + depth + ")");
+                WriteErrorInternal(logger, ex.InnerException, depth + 1);
             }
         }
     }

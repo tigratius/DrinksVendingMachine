@@ -71,6 +71,18 @@
       <HintPath>..\packages\NLog.4.5.11\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SimpleInjector, Version=4.4.3.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.4.4.3\lib\net45\SimpleInjector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.Web, Version=4.4.3.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.4.4.3\lib\net40\SimpleInjector.Integration.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector.Integration.Web.Mvc, Version=4.4.3.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.Integration.Web.Mvc.4.4.3\lib\net40\SimpleInjector.Integration.Web.Mvc.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -166,16 +178,25 @@
     <Compile Include="Models\Attributes\AuthorizeByToken.cs" />
     <Compile Include="Models\Classes\Importers\CsvImport.cs" />
     <Compile Include="Models\Classes\Importers\FileContext.cs" />
-    <Compile Include="Models\Classes\Utils\Info.cs" />
+    <Compile Include="Models\Classes\Ioc\SimpleInjectorConfig.cs" />
+    <Compile Include="Models\Classes\Loggers\NlogLogger.cs" />
+    <Compile Include="Models\Classes\Utils\Printer.cs" />
     <Compile Include="Models\Classes\Utils\Validating\Validate.cs" />
     <Compile Include="Models\Core\VengineMachine.cs" />
     <Compile Include="Models\Classes\json\JsonSuccess.cs" />
     <Compile Include="Models\Classes\json\JsonError.cs" />
     <Compile Include="Models\Classes\Utils\Validating\ValidatingTokens.cs" />
     <Compile Include="Models\Classes\json\JsonBase.cs" />
-    <Compile Include="Models\Classes\Loggers\SimpleLoggers.cs" />
     <Compile Include="Models\Classes\Utils\ExceptionWriter.cs" />
-    <Compile Include="Models\Interfaces\ISimpleLogger.cs" />
+    <Compile Include="Models\Services\AdminService.cs" />
+    <Compile Include="Models\Interfaces\IAdminService.cs" />
+    <Compile Include="Models\Interfaces\IVendingMachineLogger.cs" />
+    <Compile Include="Models\Interfaces\IRepoSave.cs" />
+    <Compile Include="Models\Interfaces\IRepository.cs" />
+    <Compile Include="Models\Interfaces\ISimpleRepo.cs" />
+    <Compile Include="Models\Interfaces\IUserService.cs" />
+    <Compile Include="Models\DB\Repo.cs" />
+    <Compile Include="Models\Services\UserService.cs" />
     <Compile Include="Models\Interfaces\IStrategy.cs" />
     <Compile Include="Models\Classes\Drink.cs" />
     <Compile Include="Models\Entities\CurrentStateEntity.cs" />
@@ -183,7 +204,6 @@
     <Compile Include="Models\DB\VengingMachineDbContext.cs" />
     <Compile Include="Models\Entities\CoinEntity.cs" />
     <Compile Include="Models\Entities\DrinkEntity.cs" />
-    <Compile Include="Models\DB\Repository.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">

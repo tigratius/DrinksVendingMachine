@@ -9,6 +9,7 @@ namespace UnitTests
     public class FakeData
     {
         protected List<DrinkEntity> DrinkEntitiesList;
+        protected List<CoinEntity> CoinEntitiesList;
 
         protected DrinkEntity Drink1;
         protected DrinkEntity Drink2;
@@ -21,7 +22,7 @@ namespace UnitTests
         protected CurrentStateEntity CurrentState;
         protected VengineMachine VengineMachine;
 
-        protected FakeRepository<DrinkEntity> RepositoryDrink;
+        /*protected FakeRepository<DrinkEntity> RepositoryDrink;*/
 
         public virtual void Init()
         {
@@ -66,12 +67,12 @@ namespace UnitTests
             };
 
             DrinkEntitiesList = new List<DrinkEntity> { Drink1, Drink2 };
-            var coinEntitiesList = new List<CoinEntity> { Coin1, Coin2 };
+            CoinEntitiesList = new List<CoinEntity> { Coin1, Coin2 };
 
-            RepositoryDrink = new FakeRepository<DrinkEntity>(DrinkEntitiesList);
-            var repositoryCoin = new FakeRepository<CoinEntity>(coinEntitiesList);
+            /*RepositoryDrink = new FakeRepository<DrinkEntity>(DrinkEntitiesList);
+            var repositoryCoin = new FakeRepository<CoinEntity>(CoinEntitiesList);*/
 
-            VengineMachine = new VengineMachine(RepositoryDrink, repositoryCoin);
+            VengineMachine = new VengineMachine(/*RepositoryDrink, repositoryCoin*/);
 
         }
     }
